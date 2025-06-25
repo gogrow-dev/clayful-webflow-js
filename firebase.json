@@ -1,0 +1,16 @@
+{
+    "hosting": {
+        "public": "educators_dashboard",
+        "headers": [
+            {
+                "source": "/index.js",
+                "headers": [
+                    {
+                        "key": "Cache-Control",
+                        "value": "no-store"
+                    }
+                ]
+            }
+        ]
+    }
+}
