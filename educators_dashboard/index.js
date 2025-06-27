@@ -51,7 +51,7 @@
   });
 
   document.addEventListener("DOMContentLoaded", function () {
-    const button = document.getElementById("btn-confirm-start-session");
+    const educatorStartSessionButton = document.getElementById("btn-confirm-start-session");
     const errorMsg = document.getElementById("msg-error-start-session");
 
     if (window.location.pathname.includes("/dashboard/launch-session")) {
@@ -69,39 +69,98 @@
       return;
     }
 
-    // 👇 Normal click handler on start-session page
-    if (!button) return;
-    let isProcessing = false;
-    button.addEventListener("click", async () => {
-      if (isProcessing) return;
-      isProcessing = true;
+    // Normal click handler on start-session page
+    if (educatorStartSessionButton) {
+      let isProcessingStartSession = false;
+      educatorStartSessionButton.addEventListener("click", async () => {
+        if (isProcessingStartSession) return;
+        isProcessingStartSession = true;
 
-      try {
+        try {
+          const token = localStorage.getItem("_ms-mid");
+
+          if (!token) throw new Error("Missing token");
+          const createSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/createSessionStaging";
+
+          const response = await fetch(createSessionUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({})
+          });
+
+          if (!response.ok) throw new Error("Server error");
+
+          console.log("response:", response);
+
+          window.location.href = "/dashboard/launch-session";
+          isProcessingStartSession = false;
+        } catch (err) {
+          console.error("Failed to start session:", err);
+          if (errorMsg) errorMsg.style.display = "block";
+          educatorStartSessionButton.disabled = false;
+        }
+      });
+    }
+
+    const studentJoinSessionButton = document.getElementById("btn-confirm-join-session");
+    const studentErrorMsg = document.getElementById("msg-error-join-session");
+
+    if (studentJoinSessionButton) {
+      let isProcessingJoinSession = false;
+
+      studentJoinSessionButton.addEventListener("click", async () => {
+        if (isProcessingJoinSession) return;
+        isProcessingJoinSession = true;
+
         const token = localStorage.getItem("_ms-mid");
 
-        if (!token) throw new Error("Missing token");
-        const createSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/createSessionStaging";
+        if (!token) {
+          console.error("Missing token");
+          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+          return;
+        }
 
-        const response = await fetch(createSessionUrl, {
+        const sessionCodeInput = document.getElementById("session-code");
+        const emojiImg = document.getElementById("emoji-selected");
+
+        const sessionNumber = sessionCodeInput?.value?.trim();
+        const emojiUrl = emojiImg?.src || "";
+
+        if (!sessionNumber || !emojiUrl) {
+          console.error("Missing input values");
+          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+          isProcessingJoinSession = false;
+          return;
+        }
+
+
+        const joinSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/joinSessionStaging";
+
+        const response = await fetch(joinSessionUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({})
+          body: JSON.stringify({
+            sessionNumber: Number(sessionNumber),
+            emojiUrl: emojiUrl
+          })
         });
 
-        if (!response.ok) throw new Error("Server error");
+        if (!response.ok) {
+          console.error("Failed to join session");
+          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+          return;
+        }
 
-        console.log("response:", response);
-
-        window.location.href = "/dashboard/launch-session";
-        isProcessing = false;
-      } catch (err) {
-        console.error("Failed to start session:", err);
-        if (errorMsg) errorMsg.style.display = "block";
-        button.disabled = false;
-      }
-    });
+        console.log("Successfully joined session");
+        window.location.href = "/kids/journal";
+        isProcessingJoinSession = false;
+      });
+    }
   });
 })();
