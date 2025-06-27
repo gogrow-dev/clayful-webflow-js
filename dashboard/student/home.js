@@ -26,11 +26,13 @@
 
       const sessionCodeInput = document.getElementById("session-code");
       const emojiImg = document.getElementById("emoji-selected");
+      const studentName = document.getElementById("student-name");
 
       const sessionNumber = sessionCodeInput?.value?.trim();
       const emojiUrl = emojiImg?.src || "";
+      const studentNameValue = studentName?.value?.trim();
 
-      if (!sessionNumber || !emojiUrl) {
+      if (!sessionNumber || !emojiUrl || !studentNameValue) {
         console.error("Missing input values");
         if (studentErrorMsg) studentErrorMsg.style.display = "block";
         isProcessingJoinSession = false;
@@ -48,7 +50,8 @@
         },
         body: JSON.stringify({
           sessionNumber: Number(sessionNumber),
-          emojiUrl: emojiUrl
+          emojiUrl: emojiUrl,
+          studentName: studentNameValue
         })
       });
 

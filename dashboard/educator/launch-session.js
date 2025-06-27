@@ -7,11 +7,11 @@
       if (!studentList) return;
 
       const students = [
-        { name: "bruno@gogrow.dev", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f710742b04e703b40b7f_sunglasses-emoji.png" },
-        { name: "filipillo@gogrow.dev", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f6c7df2f9ce8f02ac68b_pensive-emoji.png" },
-        { name: "martin@gogrow.dev", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f6b2626125731f067f3f_partying-face.png" },
-        { name: "franco@gogrow.dev", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f606b94dc61ad0390c29_star-struck-emoji.png" },
-        { name: "maite@gogrow.dev", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f6294240bdd0f581237b_confusion-emoji.png" },
+        { name: "Bruno", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f710742b04e703b40b7f_sunglasses-emoji.png" },
+        { name: "Filipillo", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f6c7df2f9ce8f02ac68b_pensive-emoji.png" },
+        { name: "Martin", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f6b2626125731f067f3f_partying-face.png" },
+        { name: "Franco", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f606b94dc61ad0390c29_star-struck-emoji.png" },
+        { name: "Maite", emojiUrl: "https://cdn.prod.website-files.com/62b25ea5deeeea5ef9f7688d/6853f6294240bdd0f581237b_confusion-emoji.png" },
       ];
 
       const firstChip = studentList.querySelector(".student-chip");

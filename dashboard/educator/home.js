@@ -30,9 +30,9 @@
         body: JSON.stringify({})
         });
 
+        console.log("response:", response);
         if (!response.ok) throw new Error("Server error");
 
-        console.log("response:", response);
 
         window.location.href = "/dashboard/launch-session";
         isProcessingStartSession = false;
