@@ -15,6 +15,14 @@
     const pausedSessionTime = document.getElementById("paused-session-time");
     const startingSoonSessionMsg = document.getElementById("starting-soon-session-msg");
 
+    const token = localStorage.getItem("_ms-mid");
+
+    if (!token) {
+      console.error("Missing token");
+      if (studentErrorMsg) studentErrorMsg.style.display = "block";
+      return;
+    }
+
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -70,14 +78,6 @@
       studentJoinSessionButton.addEventListener("click", async () => {
         if (isProcessingJoinSession) return;
         isProcessingJoinSession = true;
-
-        const token = localStorage.getItem("_ms-mid");
-
-        if (!token) {
-          console.error("Missing token");
-          if (studentErrorMsg) studentErrorMsg.style.display = "block";
-          return;
-        }
 
         const sessionCodeInput = document.getElementById("session-code");
         const emojiImg = document.getElementById("emoji-selected");
