@@ -72,7 +72,7 @@
               activeSessionMsg.style.display = "flex";
               pausedSessionMsg.style.display = "none";
             } else {
-              sessionBanner.style.display = "flex";
+              sessionBanner.style.display = "none";
             }
           }
         })
