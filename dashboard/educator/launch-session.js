@@ -10,7 +10,7 @@
     if (!studentList) return;
 
     const token = localStorage.getItem("_ms-mid");
-    if (!token) throw new Error("Missing token");
+    if (!token) return;
 
     const headers = {
       "Content-Type": "application/json",
@@ -28,46 +28,54 @@
       })
       .catch(err => console.error("Failed to load session:", err));
 
-    // === Fetch students ===
-    fetch(studentsUrl, { headers })
-      .then(res => res.json())
-      .then(studentsHash => {
-        const students = studentsHash?.students || [];
-        // Remove dummy chip
-        const firstChip = studentList.querySelector(".student-chip");
-        if (firstChip) studentList.removeChild(firstChip);
+    // === Function to fetch and render students ===
+    function fetchAndRenderStudents() {
+      fetch(studentsUrl, { headers })
+        .then(res => res.json())
+        .then(studentsHash => {
+          const students = studentsHash?.students || [];
 
-        // Update count
-        const sessionStudentCount = document.getElementById("session-student-count");
-        if (sessionStudentCount) {
-          sessionStudentCount.textContent = students.length;
-        }
+          // Clear all current student chips
+          studentList.innerHTML = "";
 
-        // Render students
-        students.forEach((student) => {
-          const card = document.createElement("div");
-          card.className = "student-chip";
+          // Update count
+          const sessionStudentCount = document.getElementById("session-student-count");
+          if (sessionStudentCount) {
+            sessionStudentCount.textContent = students.length;
+          }
 
-          const emojiDiv = document.createElement("div");
-          emojiDiv.className = "student_emoji";
+          // Render students
+          students.forEach((student) => {
+            const card = document.createElement("div");
+            card.className = "student-chip";
 
-          const emojiImg = document.createElement("img");
-          emojiImg.src = student.emoji;
-          emojiImg.alt = "emoji";
-          emojiImg.loading = "lazy";
+            const emojiDiv = document.createElement("div");
+            emojiDiv.className = "student_emoji";
 
-          emojiDiv.appendChild(emojiImg);
+            const emojiImg = document.createElement("img");
+            emojiImg.src = student.emoji;
+            emojiImg.alt = "emoji";
+            emojiImg.loading = "lazy";
 
-          const nameP = document.createElement("p");
-          nameP.className = "text_l_dashboard";
-          nameP.textContent = student.studentName;
+            emojiDiv.appendChild(emojiImg);
 
-          card.appendChild(emojiDiv);
-          card.appendChild(nameP);
+            const nameP = document.createElement("p");
+            nameP.className = "text_l_dashboard";
+            nameP.textContent = student.studentName;
 
-          studentList.appendChild(card);
-        });
-      })
-      .catch(err => console.error("Failed to load students:", err));
+            card.appendChild(emojiDiv);
+            card.appendChild(nameP);
+
+            studentList.appendChild(card);
+          });
+        })
+        .catch(err => console.error("Failed to load students:", err));
+    }
+
+    // Initial fetch
+    fetchAndRenderStudents();
+
+    // Repeat every 60 seconds (60000 ms)
+    setInterval(fetchAndRenderStudents, 15000);
   });
 })();
