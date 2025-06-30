@@ -66,7 +66,10 @@
             }
           }
         })
-        .catch(err => console.error("Failed to get active session:", err));
+        .catch(err => {
+          sessionBanner.style.display = "none";
+          console.error("Failed to get active session:", err);
+        });
     }
 
     fetchActiveSession();
