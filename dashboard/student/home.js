@@ -32,8 +32,16 @@
 
     function fetchActiveSession() {
       fetch(getSessionUrl, { headers })
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            sessionBanner.style.display = "none";
+            return;
+          }
+          return res.json();
+        })
         .then(sessionData => {
+          if (!sessionData) return;
+
           if (sessionBanner) {
             sessionBanner.style.display = "block";
             const totalTime = sessionData?.total_session_time_in_seconds
@@ -66,10 +74,7 @@
             }
           }
         })
-        .catch(err => {
-          sessionBanner.style.display = "none";
-          console.error("Failed to get active session:", err);
-        });
+        .catch(err => console.error("Failed to get active session:", err));
     }
 
     fetchActiveSession();
