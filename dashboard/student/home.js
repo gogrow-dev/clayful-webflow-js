@@ -6,65 +6,117 @@
     const studentJoinSessionButton = document.getElementById("btn-confirm-join-session");
     const studentErrorMsg = document.getElementById("msg-error-join-session");
 
-    if (!studentJoinSessionButton) {
-      return;
+    const sessionBanner = document.getElementById("session-banner");
+    const activeSessionMsg = document.getElementById("active-session-msg");
+    const pausedSessionMsg = document.getElementById("paused-session-msg");
+    const activeSessionTimeMsg = document.getElementById("active-session-time-msg");
+    const pausedSessionTimeMsg = document.getElementById("paused-session-time-msg");
+    const activeSessionTime = document.getElementById("active-session-time");
+    const pausedSessionTime = document.getElementById("paused-session-time");
+    const startingSoonSessionMsg = document.getElementById("starting-soon-session-msg");
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    };
+
+    const getSessionUrl = "https://student-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
+
+    function fetchActiveSession() {
+      fetch(getSessionUrl, { headers })
+        .then(res => res.json())
+        .then(sessionData => {
+          if (sessionBanner) {
+            sessionBanner.style.display = "block";
+            const totalTime = sessionData?.total_session_time_in_seconds
+            if (sessionData?.status == "on_hold") {
+              startingSoonSessionMsg.style.display = "block";
+              activeSessionTime.style.display = "none";
+              pausedSessionTime.style.display = "none";
+              activeSessionTimeMsg.style.display = "none";
+              pausedSessionTimeMsg.style.display = "none";
+              activeSessionMsg.style.display = "none";
+              pausedSessionMsg.style.display = "none";
+            } else if (sessionData?.status == "paused") {
+              startingSoonSessionMsg.style.display = "none";
+              activeSessionTime.style.display = "none";
+              pausedSessionTime.style.display = "block";
+              activeSessionTimeMsg.style.display = "none";
+              pausedSessionTimeMsg.style.display = "block";
+              pausedSessionTimeMsg.style.display = "block";
+              activeSessionMsg.style.display = "none";
+              pausedSessionMsg.style.display = "block";
+            } else if (sessionData?.status == "running") {
+              startingSoonSessionMsg.style.display = "none";
+              activeSessionTime.style.display = "block";
+              activeSessionTime.textContent = totalTime;
+              pausedSessionTime.style.display = "none";
+              activeSessionTimeMsg.style.display = "block";
+              pausedSessionTimeMsg.style.display = "none";
+              activeSessionMsg.style.display = "block";
+              pausedSessionMsg.style.display = "none";
+            }
+          }
+        })
+        .catch(err => console.error("Failed to get active session:", err));
     }
 
-    let isProcessingJoinSession = false;
+    fetchActiveSession();
+    setInterval(fetchActiveSession, 15000);
 
-    studentJoinSessionButton.addEventListener("click", async () => {
-      if (isProcessingJoinSession) return;
-      isProcessingJoinSession = true;
+    if (studentJoinSessionButton) {
+      let isProcessingJoinSession = false;
 
-      const token = localStorage.getItem("_ms-mid");
+      studentJoinSessionButton.addEventListener("click", async () => {
+        if (isProcessingJoinSession) return;
+        isProcessingJoinSession = true;
 
-      if (!token) {
-        console.error("Missing token");
-        if (studentErrorMsg) studentErrorMsg.style.display = "block";
-        return;
-      }
+        const token = localStorage.getItem("_ms-mid");
 
-      const sessionCodeInput = document.getElementById("session-code");
-      const emojiImg = document.getElementById("emoji-selected");
-      const studentName = document.getElementById("student-name");
+        if (!token) {
+          console.error("Missing token");
+          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+          return;
+        }
 
-      const sessionNumber = sessionCodeInput?.value?.trim();
-      const emojiUrl = emojiImg?.src || "";
-      const studentNameValue = studentName?.value?.trim();
+        const sessionCodeInput = document.getElementById("session-code");
+        const emojiImg = document.getElementById("emoji-selected");
+        const studentName = document.getElementById("student-name");
 
-      if (!sessionNumber || !emojiUrl || !studentNameValue) {
-        console.error("Missing input values");
-        if (studentErrorMsg) studentErrorMsg.style.display = "block";
+        const sessionNumber = sessionCodeInput?.value?.trim();
+        const emojiUrl = emojiImg?.src || "";
+        const studentNameValue = studentName?.value?.trim();
+
+        if (!sessionNumber || !emojiUrl || !studentNameValue) {
+          console.error("Missing input values");
+          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+          isProcessingJoinSession = false;
+          return;
+        }
+
+
+        const joinSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/student-joinSessionStaging";
+
+        const response = await fetch(joinSessionUrl, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            sessionNumber: Number(sessionNumber),
+            emojiUrl: emojiUrl,
+            studentName: studentNameValue
+          })
+        });
+
+        if (!response.ok) {
+          console.error("Failed to join session");
+          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+          return;
+        }
+
+        console.log("Successfully joined session");
+        window.location.href = "/kids/journals";
         isProcessingJoinSession = false;
-        return;
-      }
-
-
-      const joinSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/student-joinSessionStaging";
-
-      const response = await fetch(joinSessionUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          sessionNumber: Number(sessionNumber),
-          emojiUrl: emojiUrl,
-          studentName: studentNameValue
-        })
       });
-
-      if (!response.ok) {
-        console.error("Failed to join session");
-        if (studentErrorMsg) studentErrorMsg.style.display = "block";
-        return;
-      }
-
-      console.log("Successfully joined session");
-      window.location.href = "/kids/journals";
-      isProcessingJoinSession = false;
-    });
-    
+    }
   });
 })();
