@@ -5,6 +5,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     const currentSessionUrl = "https://educator-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
     const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStudentsStaging";
+    const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
     const studentList = document.getElementById("student-list");
     if (!studentList) return;
@@ -75,7 +76,30 @@
     // Initial fetch
     fetchAndRenderStudents();
 
-    // Repeat every 60 seconds (60000 ms)
+    // Refresh every 15 seconds
     setInterval(fetchAndRenderStudents, 15000);
+
+    // === Handle dashboard launch ===
+    const launchBtn = document.getElementById("btn-launch-dashboard");
+    if (launchBtn) {
+      launchBtn.addEventListener("click", function () {
+        fetch(updateSessionUrl, {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ status: "running" })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to update session status");
+            return res.json();
+          })
+          .then(() => {
+            window.location.href = "/dashboard/clayful-session-dashboard";
+          })
+          .catch(err => {
+            console.error("Failed to launch dashboard:", err);
+            alert("There was a problem launching the session. Please try again.");
+          });
+      });
+    }
   });
 })();
