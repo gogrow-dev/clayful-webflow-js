@@ -43,10 +43,10 @@
           if (!sessionData) return;
 
           if (sessionBanner) {
-            sessionBanner.style.display = "block";
+            sessionBanner.style.display = "flex";
             const totalTime = sessionData?.total_session_time_in_seconds
             if (sessionData?.status == "on_hold") {
-              startingSoonSessionMsg.style.display = "block";
+              startingSoonSessionMsg.style.display = "flex";
               activeSessionTime.style.display = "none";
               pausedSessionTime.style.display = "none";
               activeSessionTimeMsg.style.display = "none";
@@ -56,20 +56,20 @@
             } else if (sessionData?.status == "paused") {
               startingSoonSessionMsg.style.display = "none";
               activeSessionTime.style.display = "none";
-              pausedSessionTime.style.display = "block";
+              pausedSessionTime.style.display = "flex";
               activeSessionTimeMsg.style.display = "none";
-              pausedSessionTimeMsg.style.display = "block";
-              pausedSessionTimeMsg.style.display = "block";
+              pausedSessionTimeMsg.style.display = "flex";
+              pausedSessionTimeMsg.style.display = "flex";
               activeSessionMsg.style.display = "none";
-              pausedSessionMsg.style.display = "block";
+              pausedSessionMsg.style.display = "flex";
             } else if (sessionData?.status == "running") {
               startingSoonSessionMsg.style.display = "none";
-              activeSessionTime.style.display = "block";
+              activeSessionTime.style.display = "flex";
               activeSessionTime.textContent = totalTime;
               pausedSessionTime.style.display = "none";
-              activeSessionTimeMsg.style.display = "block";
+              activeSessionTimeMsg.style.display = "flex";
               pausedSessionTimeMsg.style.display = "none";
-              activeSessionMsg.style.display = "block";
+              activeSessionMsg.style.display = "flex";
               pausedSessionMsg.style.display = "none";
             }
           }
