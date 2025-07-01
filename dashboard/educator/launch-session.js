@@ -1,7 +1,8 @@
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`educator/launch-session.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
-
+  HOME_PAGE_URL = "/educators-home"
+  DASHBOARD_URL = "/dashboard/clayful-session-dashboard";
   
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -24,9 +25,22 @@
     fetch(currentSessionUrl, { headers })
       .then(res => res.json())
       .then(sessionData => {
+        if (!sessionData) {
+          console.error("No active session found");
+          window.location.href = HOME_PAGE_URL;
+          return;
+        }
+
         const sessionCodeElement = document.getElementById("session-code");
         if (sessionCodeElement && sessionData?.session_number) {
           sessionCodeElement.textContent = sessionData.session_number;
+        }
+        const sessionStatus = sessionData?.status;
+
+        if (sessionStatus === "paused" || sessionStatus === "running") {
+          window.location.href = DASHBOARD_URL;
+        } else if (sessionStatus === "finished") {
+          window.location.href = HOME_PAGE_URL;
         }
       })
       .catch(err => console.error("Failed to load session:", err));
