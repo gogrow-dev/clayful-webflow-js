@@ -2,6 +2,7 @@
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
+
   document.addEventListener("DOMContentLoaded", function () {
     const studentJoinSessionButton = document.getElementById("btn-confirm-join-session");
     const studentErrorMsg = document.getElementById("msg-error-join-session");
@@ -28,6 +29,10 @@
       Authorization: `Bearer ${token}`
     };
 
+    function startTime() {
+
+    }
+
     const getSessionUrl = "https://student-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
 
     function fetchActiveSession() {
@@ -51,9 +56,20 @@
               totalTimeInSeconds += sessionData?.total_session_time_in_seconds ?? 0;
             }
 
-            const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
-            const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
-            const formattedTime = `${minutes}:${seconds}`;
+            if (typeof window !== "undefined") {
+              clearInterval(window._sessionTimerInterval);
+              window._sessionTimerInterval = null;
+
+              window._sessionTimerInterval = setInterval(() => {
+                totalTimeInSeconds++;
+                const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
+                const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
+                const formattedTime = `${minutes}:${seconds}`;
+
+                pausedSessionTime.textContent = formattedTime;
+                activeSessionTime.textContent = formattedTime;
+              }, 1000);
+            }
 
             if (sessionData?.status == "on_hold") {
               startingSoonSessionMsg.style.display = "flex";
@@ -67,7 +83,6 @@
               startingSoonSessionMsg.style.display = "none";
               activeSessionTime.style.display = "none";
               pausedSessionTime.style.display = "flex";
-              pausedSessionTime.textContent = formattedTime;
               activeSessionTimeMsg.style.display = "none";
               pausedSessionTimeMsg.style.display = "flex";
               pausedSessionTimeMsg.style.display = "flex";
@@ -76,7 +91,6 @@
             } else if (sessionData?.status == "running") {
               startingSoonSessionMsg.style.display = "none";
               activeSessionTime.style.display = "flex";
-              activeSessionTime.textContent = formattedTime;
               pausedSessionTime.style.display = "none";
               activeSessionTimeMsg.style.display = "flex";
               pausedSessionTimeMsg.style.display = "none";
