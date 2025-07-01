@@ -15,9 +15,17 @@
     const resumeBtn = document.getElementById("btn-resume-session");
     const pauseModal = document.getElementById("pause-modal");
     const countStudentsInSession = document.getElementById("count-students-in-session");
+    const wrapperActiveSessionTime = document.getElementById("wrapper-active-session-time");
+    const wrapperPausedSessionTime = document.getElementById("wrapper-paused-session-time");
+    const activeSessionTime = document.getElementById("active-session-time");
+    const pausedSessionTime = document.getElementById("paused-session-time");
 
-    if (!studentList || !waitingText || !studentViewTable) return;
+    if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
+        !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
+    ) return;
     studentViewTable.style.display = "none";
+    wrapperActiveSessionTime.style.display = "none";
+    wrapperPausedSessionTime.style.display = "none";
 
     const token = localStorage.getItem("_ms-mid");
     if (!token) return;
@@ -94,6 +102,35 @@
         if (sessionData?.status === "running") {
           if (pauseBtn) pauseBtn.style.display = "flex";
           if (resumeBtn) resumeBtn.style.display = "none";
+        }
+
+        if (typeof window !== "undefined") {
+          clearInterval(window._sessionTimerInterval);
+          window._sessionTimerInterval = null;
+
+          window._sessionTimerInterval = setInterval(() => {
+            totalTimeInSeconds++;
+            const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
+            const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
+            const formattedTime = `${minutes}:${seconds}`;
+
+            pausedSessionTime.textContent = formattedTime;
+            activeSessionTime.textContent = formattedTime;
+          }, 1000);
+        }
+
+        if (sessionData?.status == "paused") {
+          activeSessionTime.style.display = "none";
+          wrapperActiveSessionTime.style.display = "none";
+          pausedSessionTime.style.display = "flex";
+          wrapperPausedSessionTime.style.display = "flex";
+        } else if (sessionData?.status == "running") {
+          activeSessionTime.style.display = "flex";
+          wrapperActiveSessionTime.style.display = "flex";
+          pausedSessionTime.style.display = "none";
+          wrapperPausedSessionTime.style.display = "none";
+        } else {
+          sessionBanner.style.display = "none";
         }
       })
       .catch(err => console.error("Failed to load session:", err));
