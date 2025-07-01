@@ -4,7 +4,8 @@
 
 
   document.addEventListener("DOMContentLoaded", function () {
-    const studentJoinSessionButton = document.getElementById("btn-confirm-join-session");
+    const studentConfirmJoinSessionButton = document.getElementById("btn-confirm-join-session");
+    const studentJoinSessionButton = document.getElementById("btn-nav-join-session");
     const studentErrorMsg = document.getElementById("msg-error-join-session");
 
     const sessionBanner = document.getElementById("session-banner");
@@ -36,7 +37,7 @@
         .then(res => {
           if (!res.ok) {
             sessionBanner.style.display = "none";
-            studentJoinSessionButton.style.display = "block";
+            studentJoinSessionButton.style.display = "flex";
             studentJoinSessionButton.disabled = false;
             return;
           }
@@ -108,10 +109,10 @@
     fetchActiveSession();
     setInterval(fetchActiveSession, 15000);
 
-    if (studentJoinSessionButton) {
+    if (studentConfirmJoinSessionButton) {
       let isProcessingJoinSession = false;
 
-      studentJoinSessionButton.addEventListener("click", async () => {
+      studentConfirmJoinSessionButton.addEventListener("click", async () => {
         if (isProcessingJoinSession) return;
         isProcessingJoinSession = true;
 
