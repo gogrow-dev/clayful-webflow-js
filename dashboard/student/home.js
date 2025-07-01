@@ -1,4 +1,4 @@
-import { fetchActiveSession } from "../utils/activeSession.js";
+//import { fetchActiveSession } from "../utils/activeSession.js";
 
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
@@ -24,8 +24,8 @@ import { fetchActiveSession } from "../utils/activeSession.js";
 
     const getSessionUrl = "https://student-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
 
-    fetchActiveSession(getSessionUrl);
-    setInterval(fetchActiveSession, 15000);
+    //fetchActiveSession(getSessionUrl);
+    //setInterval(fetchActiveSession, 15000);
 
     if (studentConfirmJoinSessionButton) {
       let isProcessingJoinSession = false;
