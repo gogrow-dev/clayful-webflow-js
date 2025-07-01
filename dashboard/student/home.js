@@ -44,7 +44,12 @@
 
           if (sessionBanner) {
             sessionBanner.style.display = "flex";
-            const totalTime = sessionData?.total_session_time_in_seconds
+
+            const totalTimeInSeconds = sessionData?.total_session_time_in_seconds;
+            const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
+            const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
+            const formattedTime = `${minutes}:${seconds}`;
+
             if (sessionData?.status == "on_hold") {
               startingSoonSessionMsg.style.display = "flex";
               activeSessionTime.style.display = "none";
@@ -65,7 +70,7 @@
             } else if (sessionData?.status == "running") {
               startingSoonSessionMsg.style.display = "none";
               activeSessionTime.style.display = "flex";
-              activeSessionTime.textContent = totalTime;
+              activeSessionTime.textContent = formattedTime;
               pausedSessionTime.style.display = "none";
               activeSessionTimeMsg.style.display = "flex";
               pausedSessionTimeMsg.style.display = "none";
