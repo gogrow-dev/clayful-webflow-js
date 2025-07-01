@@ -60,11 +60,12 @@
 
             clearInterval(window._sessionTimerInterval);
             window._sessionTimerInterval = null;
+
             activeSessionTime.style.display = "none";
             wrapperActiveSessionTime.style.display = "none";
+            startSessionTimer(0);
             pausedSessionTime.style.display = "flex";
             wrapperPausedSessionTime.style.display = "flex";
-            startSessionTimer(0);
           })
           .catch(err => {
             console.error("Failed to pause session:", err);
@@ -156,22 +157,30 @@
         if (status === "paused") {
           pauseBtn.style.display = "none";
           resumeBtn.style.display = "flex";
-          pausedSessionTime.style.display = "flex";
-          wrapperPausedSessionTime.style.display = "flex";
+
           activeSessionTime.style.display = "none";
           wrapperActiveSessionTime.style.display = "none";
+
           clearInterval(window._sessionTimerInterval);
+          startSessionTimer(totalSeconds);
+
+          pausedSessionTime.style.display = "flex";
+          wrapperPausedSessionTime.style.display = "flex";
         } else if (status === "running") {
           totalSeconds += sessionData?.total_session_time_in_seconds ?? 0;
 
           pauseBtn.style.display = "flex";
           resumeBtn.style.display = "none";
-          activeSessionTime.style.display = "flex";
-          wrapperActiveSessionTime.style.display = "flex";
+
           pausedSessionTime.style.display = "none";
           wrapperPausedSessionTime.style.display = "none";
+
+          startSessionTimer(totalSeconds);
+
+          activeSessionTime.style.display = "flex";
+          wrapperActiveSessionTime.style.display = "flex";
         }
-        startSessionTimer(totalSeconds);
+        
       })
       .catch(err => console.error("Failed to load session:", err));
 
