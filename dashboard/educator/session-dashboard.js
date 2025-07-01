@@ -8,7 +8,10 @@
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
     const studentList = document.getElementById("students-list");
-    if (!studentList) return;
+    const waitingText = document.getElementById("text-waiting-status");
+    const studentViewTable = document.getElementById("student-view-table");
+    if (!studentList || !waitingText || !studentViewTable) return;
+    studentViewTable.style.display = "flex";
 
     const token = localStorage.getItem("_ms-mid");
     if (!token) return;
@@ -35,12 +38,23 @@
         .then(res => res.json())
         .then(data => {
           const students = data?.students || [];
-          studentList.innerHTML = "";
+
+          // if no students, show waiting text and hide student view table
+          if (!students || students.length === 0) {
+            if (waitingText) waitingText.style.display = "flex";
+            if (studentViewTable) studentViewTable.style.display = "none";
+            return;
+          }
+
+          // studentList.innerHTML = "";
 
           students.forEach(student => {
             const row = createStudentRow(student);
             studentContainer.appendChild(row);
           });
+
+          if (waitingText) waitingText.style.display = "none";
+            if (studentViewTable) studentViewTable.style.display = "flex";
         })
         .catch(err => {
           console.error("Failed to fetch students", err);
