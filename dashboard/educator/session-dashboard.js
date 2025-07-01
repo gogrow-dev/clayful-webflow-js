@@ -234,7 +234,7 @@
         .then(data => {
           const students = data?.students || [];
 
-          // if no students, show waiting text and hide student view table
+          console.log("Fetched students:", students);
           if (!students || students.length === 0) {
             waitingText.style.display = "flex";
             studentViewTable.style.display = "none";
@@ -252,6 +252,7 @@
 
           waitingText.style.display = "none";
           studentViewTable.style.removeProperty("display");
+          studentList.style.removeProperty("display");
         })
         .catch(err => {
           console.error("Failed to fetch students", err);
@@ -325,24 +326,27 @@
         e.preventDefault();
 
         const sidebar = document.getElementById("sidebar-student");
-        if (!sidebar) return;
+        if (sidebar){
 
-        sidebar.style.display = "flex";
-
-        const sidebarName = sidebar.querySelector("#sidebar-student-name");
-        const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
-        const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
-
-        const sidebarJournalName = sidebar.querySelector("#sidebar-journal-name");
-        const sidebarJournalLink = sidebar.querySelector("#sidebar-btn-view-journal");
-
-        if (sidebarName) sidebarName.textContent = student.studentName;
-        if (sidebarEmail) sidebarEmail.textContent = student.email || "—";
-        if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
-
-        if (sidebarJournalName) sidebarJournalName.textContent = student.journalName || "—";
-        if (sidebarJournalLink) {
-          sidebarJournalLink.href = `##`;
+          sidebar.style.display = "flex";
+          
+          const sidebarName = sidebar.querySelector("#sidebar-student-name");
+          const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
+          const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
+          
+          const sidebarJournalName = sidebar.querySelector("#sidebar-journal-name");
+          const sidebarJournalLink = sidebar.querySelector("#sidebar-btn-view-journal");
+          
+          if (sidebarName) sidebarName.textContent = student.studentName;
+          if (sidebarEmail) sidebarEmail.textContent = student.email || "—";
+          if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
+          
+          if (sidebarJournalName) sidebarJournalName.textContent = student.journalName || "—";
+          if (sidebarJournalLink) {
+            sidebarJournalLink.href = `##`;
+          }
+        } else {
+          console.error("Sidebar element not found");
         }
       });
 
