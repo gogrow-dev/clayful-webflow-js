@@ -50,7 +50,7 @@
 
           students.forEach(student => {
             const row = createStudentRow(student);
-            studentContainer.appendChild(row);
+            studentList.appendChild(row);
           });
 
           if (waitingText) waitingText.style.display = "none";
