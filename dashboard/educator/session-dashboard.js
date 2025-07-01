@@ -64,6 +64,7 @@
     function createStudentRow(student) {
       const row = document.createElement("div");
       row.className = "students-item";
+      row.id = `student-row`;
       row.setAttribute("fs-list-element", "item");
 
       row.innerHTML = `
