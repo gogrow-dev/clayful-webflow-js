@@ -77,8 +77,8 @@
               </div>
             </div>
             <div class="student-name-id">
-              <p class="text_m_dashboard" id="student-name">${student.studentName}</p>
-              <p class="text_m_dashboard opacity_60" id="student-email">${student.email || '[Unknown Email]'}</p>
+              <p class="text_m_dashboard" id="student-name" fs-list-field="studentName">${student.studentName}</p>
+              <p class="text_m_dashboard opacity_60" id="student-email" fs-list-field="email">${student.email || '[Unknown Email]'}</p>
             </div>
           </div>
         </div>
@@ -94,17 +94,17 @@
         <div class="student-information width-200">
           <div class="info-wrapper">
             <div class="sudent-journal">
-              <p class="text_m_dashboard" id="student-journal-name">${student.journalName || "—"}</p>
-              <p class="text_m_dashboard opacity_60" id="student-journal-desc">${student.journalDescription || ""}</p>
+              <p class="text_m_dashboard" id="student-journal-name" fs-list-field="journalName">${student.journalName || "—"}</p>
+              <p class="text_m_dashboard opacity_60" id="student-journal-desc" fs-list-field="journalDescription">${student.journalDescription || ""}</p>
             </div>
           </div>
         </div>
 
         <div class="student-information width-140 status">
-          <div class="status-journal" fs-list-field="status-started">
+          <div class="status-journal">
             <div class="student-journal-status-dot" id="student-journal-status-dot"></div>
             <div class="sudent-status">
-              <p class="text_m_dashboard" id="student-journal-status">${student.status || "Not started"}</p>
+              <p class="text_m_dashboard" id="student-journal-status" fs-list-field="status">${student.status || "Not started"}</p>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
         <div class="student-information width-140">
           <div class="info-wrapper">
             <div class="sudent-time">
-              <p class="text_m_dashboard" id="student-time-spent">${student.timeSpent || "—"}</p>
+              <p class="text_m_dashboard" id="student-time-spent" fs-list-field="timeSpent">${student.timeSpent || "—"}</p>
             </div>
           </div>
         </div>
