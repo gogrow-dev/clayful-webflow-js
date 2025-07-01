@@ -29,6 +29,7 @@
         !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
     ) return;
 
+    studentList.innerHTML = "";
     studentViewTable.style.display = "none";
     wrapperActiveSessionTime.style.display = "none";
     wrapperPausedSessionTime.style.display = "none";
@@ -236,7 +237,7 @@
           // if no students, show waiting text and hide student view table
           if (!students || students.length === 0) {
             waitingText.style.display = "flex";
-            studentViewTable.style.removeProperty("display");
+            studentViewTable.style.display = "none";
             countStudentsInSession.textContent = "0";
             return;
           }
