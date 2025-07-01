@@ -29,10 +29,6 @@
       Authorization: `Bearer ${token}`
     };
 
-    function startTime() {
-
-    }
-
     const getSessionUrl = "https://student-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
 
     function fetchActiveSession() {
@@ -40,12 +36,17 @@
         .then(res => {
           if (!res.ok) {
             sessionBanner.style.display = "none";
+            studentJoinSessionButton.style.display = "block";
+            studentJoinSessionButton.disabled = false;
             return;
           }
           return res.json();
         })
         .then(sessionData => {
           if (!sessionData) return;
+
+          studentJoinSessionButton.style.display = "none";
+          studentJoinSessionButton.disabled = true;
 
           if (sessionBanner) {
             sessionBanner.style.display = "flex";
