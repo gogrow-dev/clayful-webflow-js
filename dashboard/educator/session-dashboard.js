@@ -29,7 +29,12 @@
 
     // === Handle pause session ===
     if (pauseBtnConfirm) {
+      let isProcessingPauseSession = false;
+      
       pauseBtnConfirm.addEventListener("click", function () {
+        if (isProcessingPauseSession) return;
+        isProcessingPauseSession = true;
+
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -51,10 +56,15 @@
             console.error("Failed to launch dashboard:", err);
             alert("There was a problem launching the session. Please try again.");
           });
+        isProcessingPauseSession = false;
       });
     }
     if (resumeBtn) {
+      let isProcessingResumeSession = false;
       resumeBtn.addEventListener("click", function () {
+        if (isProcessingResumeSession) return;
+        isProcessingResumeSession = true;
+
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -75,6 +85,7 @@
             console.error("Failed to resume session:", err);
             alert("There was a problem resuming the session. Please try again.");
           });
+         isProcessingResumeSession = false; 
       });
     }
 

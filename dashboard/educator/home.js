@@ -12,35 +12,35 @@
 
     let isProcessingStartSession = false;
     educatorStartSessionButton.addEventListener("click", async () => {
-    if (isProcessingStartSession) return;
-    isProcessingStartSession = true;
+      if (isProcessingStartSession) return;
+      isProcessingStartSession = true;
 
-    try {
-        const token = localStorage.getItem("_ms-mid");
+      try {
+          const token = localStorage.getItem("_ms-mid");
 
-        if (!token) throw new Error("Missing token");
-        const createSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-createSessionStaging";
+          if (!token) throw new Error("Missing token");
+          const createSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-createSessionStaging";
 
-        const response = await fetch(createSessionUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({})
-        });
+          const response = await fetch(createSessionUrl, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({})
+          });
 
-        console.log("response:", response);
-        if (!response.ok) throw new Error("Server error");
+          console.log("response:", response);
+          if (!response.ok) throw new Error("Server error");
 
 
-        window.location.href = "/dashboard/launch-session";
-        isProcessingStartSession = false;
-    } catch (err) {
-        console.error("Failed to start session:", err);
-        if (errorMsg) errorMsg.style.display = "block";
-        educatorStartSessionButton.disabled = false;
-    }
+          window.location.href = "/dashboard/launch-session";
+          isProcessingStartSession = false;
+      } catch (err) {
+          console.error("Failed to start session:", err);
+          if (errorMsg) errorMsg.style.display = "block";
+          educatorStartSessionButton.disabled = false;
+      }
     });
   });
 })();
