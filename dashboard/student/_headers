@@ -1,2 +1,5 @@
 /home.js
   Cache-Control: no-store
+  Access-Control-Allow-Origin: https://clayful-health-fafbd8157a3597c91291c3e5.webflow.io
+  Access-Control-Allow-Methods: GET
+  Access-Control-Allow-Headers: *
