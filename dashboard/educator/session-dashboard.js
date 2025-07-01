@@ -11,7 +11,7 @@
     const waitingText = document.getElementById("text-waiting-status");
     const studentViewTable = document.getElementById("student-view-table");
     if (!studentList || !waitingText || !studentViewTable) return;
-    studentViewTable.style.display = "flex";
+    studentViewTable.style.display = "none";
 
     const token = localStorage.getItem("_ms-mid");
     if (!token) return;
@@ -42,7 +42,7 @@
           // if no students, show waiting text and hide student view table
           if (!students || students.length === 0) {
             if (waitingText) waitingText.style.display = "flex";
-            if (studentViewTable) studentViewTable.style.display = "none";
+            if (studentViewTable) studentViewTable.style.removeProperty("display");
             return;
           }
 
@@ -54,7 +54,7 @@
           });
 
           if (waitingText) waitingText.style.display = "none";
-            if (studentViewTable) studentViewTable.style.display = "flex";
+          if (studentViewTable) studentViewTable.style.removeProperty("display");
         })
         .catch(err => {
           console.error("Failed to fetch students", err);
