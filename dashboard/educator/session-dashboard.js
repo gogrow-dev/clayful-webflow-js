@@ -130,8 +130,8 @@
     // Initial fetch
     fetchAndRenderStudents();
 
-    // Refresh every 15 seconds
-    setInterval(fetchAndRenderStudents, 15000);
+    // Refresh every 60 seconds
+    setInterval(fetchAndRenderStudents, 60000);
 
     // === Handle pause session ===
     const pauseBtn = document.getElementById("btn-pause-session");
