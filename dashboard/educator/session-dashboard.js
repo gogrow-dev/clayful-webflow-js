@@ -4,7 +4,7 @@
   HOME_PAGE_URL = "/educators-home"
 
   document.addEventListener("DOMContentLoaded", function () {
-    const currentSessionUrl = "https://educator-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
+    const currentSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStaging";
     const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStudentsStaging?full=true";
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
@@ -43,13 +43,15 @@
 
     // === Fetch session info and start timer
     fetch(currentSessionUrl, { headers })
-      .then(res => res.json())
-      .then(sessionData => {
-        if (!sessionData) {
-          console.error("No active session found");
+      .then(res => {
+        if (!res.ok) {
+          console.error("Failed to fetch current session");
           window.location.href = HOME_PAGE_URL;
           return;
         }
+        return res.json();
+      })
+      .then(sessionData => {
         const sessionCodeElement = document.getElementById("session-code");
         const sessionStartTimeElement = document.getElementById("session-started");
 
