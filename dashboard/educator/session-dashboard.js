@@ -46,7 +46,7 @@
             return;
           }
 
-          studentList.innerHTML = "";
+          // studentList.innerHTML = "";
 
           students.forEach(student => {
             const row = createStudentRow(student);
@@ -64,11 +64,11 @@
     function createStudentRow(student) {
       const row = document.createElement("div");
       row.className = "students-item";
-      row.id = `student-row`;
+      row.id = "student-row";
       row.setAttribute("fs-list-element", "item");
 
       row.innerHTML = `
-        <div id="student-row" class="student-information width-200">
+        <div class="student-information width-200">
           <div class="info-wrapper">
             <div class="div-profile-pic">
               <div class="student-status-dot" id="student-status-dot"></div>
