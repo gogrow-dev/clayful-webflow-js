@@ -26,7 +26,7 @@
     const finishBtn = document.getElementById("btn-finish-session");
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
-        !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal || !finishBtn
+        !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
     ) return;
 
     studentViewTable.style.display = "none";
@@ -314,7 +314,7 @@
         </div>
 
         <div class="student-information width-80">
-          <a id="open-student-details" data-w-id="2e2b3a62-0b5c-d9aa-2de3-824e45cce71c" href="#" class="see-student-detials w-inline-block">
+          <a id="open-student-details" href="#" class="see-student-detials w-inline-block">
             <img loading="lazy" src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" alt="arrow pointing left">
           </a>
         </div>
