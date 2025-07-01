@@ -2,8 +2,6 @@
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`educator/launch-session.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
-  
-
   document.addEventListener("DOMContentLoaded", function () {
     const currentSessionUrl = "https://educator-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
     const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStudentsStaging";
@@ -33,25 +31,15 @@
 
     // === Function to fetch and render students ===
     function fetchAndRenderStudents() {
-      fetch(studentsUrl, { headers })
+      fetch(`${studentsUrl}?full=true`, { headers })
         .then(res => res.json())
         .then(studentsHash => {
           const students = studentsHash?.students || [];
 
-          const waitingText = document.getElementById("text-waiting-status");
-          const studentJoined = document.getElementById("session-student-joined");  
-
-          // if no students, show waiting text and hide student joined message
-          if (!students || students.length === 0) {
-            if (waitingText) waitingText.style.display = "flex";
-            if (studentJoined) studentJoined.style.display = "none";
-            return;
-          }
-
           // Clear all current student chips
           studentList.innerHTML = "";
 
-            // Update count
+          // Update count
           const sessionStudentCount = document.getElementById("session-student-count");
           if (sessionStudentCount) {
             sessionStudentCount.textContent = students.length;
@@ -81,9 +69,6 @@
 
             studentList.appendChild(card);
           });
-
-          if (waitingText) waitingText.style.display = "none";
-          if (studentJoined) studentJoined.style.display = "flex";
         })
         .catch(err => console.error("Failed to load students:", err));
     }
@@ -94,21 +79,21 @@
     // Refresh every 15 seconds
     setInterval(fetchAndRenderStudents, 15000);
 
-    // === Handle dashboard launch ===
-    const launchBtn = document.getElementById("btn-launch-dashboard");
-    if (launchBtn) {
-      launchBtn.addEventListener("click", function () {
+    // === Handle pause session ===
+    const pauseBtn = document.getElementById("btn-pause-session");
+    if (pauseBtn) {
+      pauseBtn.addEventListener("click", function () {
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
-          body: JSON.stringify({ status: "running" })
+          body: JSON.stringify({ status: "paused" })
         })
           .then(res => {
             if (!res.ok) throw new Error("Failed to update session status");
             return res.json();
           })
           .then(() => {
-            window.location.href = "/dashboard/clayful-session-dashboard";
+            // stope clock
           })
           .catch(err => {
             console.error("Failed to launch dashboard:", err);
