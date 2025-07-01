@@ -58,8 +58,6 @@
             pauseModal.style.display = "none";
             resumeBtn.style.display = "flex";
 
-
-
             activeSessionTime.style.display = "none";
             wrapperActiveSessionTime.style.display = "none";
 
@@ -150,9 +148,7 @@
           sessionCodeElement.textContent = sessionData.session_number;
         }
         if (sessionStartTimeElement && sessionData?.launched_at) {
-          // with this format Started Jun 3, 2025, 2:51 PM
-          console.log("Session started at:", sessionData.launched_at);
-          const startTime = new Date(sessionData.launched_at);
+          const startTime = new Date(sessionData.launched_at._seconds * 1000);
           sessionStartTimeElement.textContent = startTime.toLocaleString();
         }
 
