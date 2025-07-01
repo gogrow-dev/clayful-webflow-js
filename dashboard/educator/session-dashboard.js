@@ -329,6 +329,11 @@
         if (sidebar){
 
           sidebar.style.display = "flex";
+          const sidebarPanel = sidebar.querySelector(".sidebar-dashboard");
+          if (sidebarPanel) {
+            sidebarPanel.style.opacity = "1";
+            sidebarPanel.style.transform = "translate3d(0, 0, 0)";
+          }
           
           const sidebarName = sidebar.querySelector("#sidebar-student-name");
           const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
