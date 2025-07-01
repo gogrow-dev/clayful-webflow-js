@@ -54,6 +54,7 @@
             if (resumeBtn) {
               resumeBtn.style.display = "flex";
             }
+            pausedSessionTime.textContent = "00:00";
             activeSessionTime.style.display = "none";
             wrapperActiveSessionTime.style.display = "none";
             pausedSessionTime.style.display = "flex";
@@ -113,7 +114,7 @@
           if (resumeBtn) resumeBtn.style.display = "none";
         }
 
-         let totalTimeInSeconds = sessionData?.status_time_in_seconds ?? 0;
+        let totalTimeInSeconds = sessionData?.status_time_in_seconds ?? 0;
 
         if (sessionData?.status == "running") {
           totalTimeInSeconds += sessionData?.total_session_time_in_seconds ?? 0;
