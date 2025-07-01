@@ -23,6 +23,7 @@
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
         !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
     ) return;
+
     studentViewTable.style.display = "none";
     wrapperActiveSessionTime.style.display = "none";
     wrapperPausedSessionTime.style.display = "none";
@@ -34,6 +35,25 @@
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     };
+
+    function startSessionTimer(initialSeconds) {
+      if (typeof window === "undefined") return;
+
+      clearInterval(window._sessionTimerInterval);
+      window._sessionTimerInterval = null;
+
+      let totalTimeInSeconds = initialSeconds;
+
+      window._sessionTimerInterval = setInterval(() => {
+        totalTimeInSeconds++;
+        const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
+        const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
+        const formattedTime = `${minutes}:${seconds}`;
+
+        pausedSessionTime.textContent = formattedTime;
+        activeSessionTime.textContent = formattedTime;
+      }, 1000);
+    }
 
     // === Handle pause session ===
     if (pauseBtnConfirm) {
@@ -48,25 +68,26 @@
             return res.json();
           })
           .then(() => {
-            if (pauseBtn) pauseBtn.style.display = "none";
-            if (pauseModal) pauseModal.style.display = "none";
-            
-            if (resumeBtn) {
-              resumeBtn.style.display = "flex";
-            }
+            pauseBtn.style.display = "none";
+            pauseModal.style.display = "none";
+            resumeBtn.style.display = "flex";
+
+            clearInterval(window._sessionTimerInterval);
+            window._sessionTimerInterval = null;
+
             pausedSessionTime.textContent = "00:00";
             activeSessionTime.style.display = "none";
             wrapperActiveSessionTime.style.display = "none";
             pausedSessionTime.style.display = "flex";
             wrapperPausedSessionTime.style.display = "flex";
-            
           })
           .catch(err => {
-            console.error("Failed to launch dashboard:", err);
-            alert("There was a problem launching the session. Please try again.");
+            console.error("Failed to pause session:", err);
+            alert("There was a problem pausing the session. Please try again.");
           });
       });
     }
+
     if (resumeBtn) {
       resumeBtn.addEventListener("click", function () {
         fetch(updateSessionUrl, {
@@ -79,15 +100,21 @@
             return res.json();
           })
           .then(() => {
-            if (resumeBtn) resumeBtn.style.display = "none";
-            
-            if (pauseBtn) {
-              pauseBtn.style.display = "flex";
-            }
+            resumeBtn.style.display = "none";
+            pauseBtn.style.display = "flex";
+
             activeSessionTime.style.display = "flex";
             wrapperActiveSessionTime.style.display = "flex";
             pausedSessionTime.style.display = "none";
             wrapperPausedSessionTime.style.display = "none";
+
+            // Optionally fetch session again for accurate time
+            fetch(currentSessionUrl, { headers })
+              .then(res => res.json())
+              .then(session => {
+                const total = (session.total_session_time_in_seconds || 0) + (session.status_time_in_seconds || 0);
+                startSessionTimer(total);
+              });
           })
           .catch(err => {
             console.error("Failed to resume session:", err);
@@ -96,7 +123,7 @@
       });
     }
 
-    // === Fetch session code ===
+    // === Fetch session info and start timer
     fetch(currentSessionUrl, { headers })
       .then(res => res.json())
       .then(sessionData => {
@@ -105,48 +132,27 @@
         if (sessionCodeElement && sessionData?.session_number) {
           sessionCodeElement.textContent = sessionData.session_number;
         }
-        if (sessionData?.status === "paused") {
-          if (pauseBtn) pauseBtn.style.display = "none";
-          if (resumeBtn) resumeBtn.style.display = "flex";
-        }
-        if (sessionData?.status === "running") {
-          if (pauseBtn) pauseBtn.style.display = "flex";
-          if (resumeBtn) resumeBtn.style.display = "none";
-        }
 
-        let totalTimeInSeconds = sessionData?.status_time_in_seconds ?? 0;
+        const status = sessionData?.status;
+        const totalSeconds = (sessionData?.total_session_time_in_seconds || 0) + (sessionData?.status_time_in_seconds || 0);
 
-        if (sessionData?.status == "running") {
-          totalTimeInSeconds += sessionData?.total_session_time_in_seconds ?? 0;
-        }
-
-        if (typeof window !== "undefined") {
-          clearInterval(window._sessionTimerInterval);
-          window._sessionTimerInterval = null;
-
-          window._sessionTimerInterval = setInterval(() => {
-            totalTimeInSeconds++;
-            const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
-            const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
-            const formattedTime = `${minutes}:${seconds}`;
-
-            pausedSessionTime.textContent = formattedTime;
-            activeSessionTime.textContent = formattedTime;
-          }, 1000);
-        }
-
-        if (sessionData?.status == "paused") {
-          activeSessionTime.style.display = "none";
-          wrapperActiveSessionTime.style.display = "none";
+        if (status === "paused") {
+          pauseBtn.style.display = "none";
+          resumeBtn.style.display = "flex";
+          pausedSessionTime.textContent = "00:00";
           pausedSessionTime.style.display = "flex";
           wrapperPausedSessionTime.style.display = "flex";
-        } else if (sessionData?.status == "running") {
+          activeSessionTime.style.display = "none";
+          wrapperActiveSessionTime.style.display = "none";
+          clearInterval(window._sessionTimerInterval);
+        } else if (status === "running") {
+          pauseBtn.style.display = "flex";
+          resumeBtn.style.display = "none";
           activeSessionTime.style.display = "flex";
           wrapperActiveSessionTime.style.display = "flex";
           pausedSessionTime.style.display = "none";
           wrapperPausedSessionTime.style.display = "none";
-        } else {
-          sessionBanner.style.display = "none";
+          startSessionTimer(totalSeconds);
         }
       })
       .catch(err => console.error("Failed to load session:", err));
@@ -160,16 +166,13 @@
 
           // if no students, show waiting text and hide student view table
           if (!students || students.length === 0) {
-            if (waitingText) waitingText.style.display = "flex";
-            if (studentViewTable) studentViewTable.style.removeProperty("display");
+            waitingText.style.display = "flex";
+            studentViewTable.style.removeProperty("display");
             countStudentsInSession.textContent = "0";
             return;
           }
 
-          if (countStudentsInSession) {
-            countStudentsInSession.textContent = students.length;
-          }
-
+          countStudentsInSession.textContent = students.length;
           studentList.innerHTML = "";
 
           students.forEach(student => {
@@ -177,8 +180,8 @@
             studentList.appendChild(row);
           });
 
-          if (waitingText) waitingText.style.display = "none";
-          if (studentViewTable) studentViewTable.style.removeProperty("display");
+          waitingText.style.display = "none";
+          studentViewTable.style.removeProperty("display");
         })
         .catch(err => {
           console.error("Failed to fetch students", err);
@@ -256,8 +259,5 @@
 
     // Refresh every 60 seconds
     setInterval(fetchAndRenderStudents, 60000);
-
-    
-
   });
 })();
