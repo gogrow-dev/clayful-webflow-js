@@ -46,7 +46,7 @@
             return;
           }
 
-          // studentList.innerHTML = "";
+          studentList.innerHTML = "";
 
           students.forEach(student => {
             const row = createStudentRow(student);
