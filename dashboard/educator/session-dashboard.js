@@ -118,24 +118,8 @@
 
     // === Handle finish session ===
 
-    // function startSessionTimer(initialSeconds) {
-    //   if (typeof window === "undefined") return;
 
-    //   clearInterval(window._sessionTimerInterval);
-    //   window._sessionTimerInterval = null;
 
-    //   let totalTimeInSeconds = initialSeconds;
-
-    //   window._sessionTimerInterval = setInterval(() => {
-    //     totalTimeInSeconds++;
-    //     const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
-    //     const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
-    //     const formattedTime = `${minutes}:${seconds}`;
-
-    //     pausedSessionTime.textContent = formattedTime;
-    //     activeSessionTime.textContent = formattedTime;
-    //   }, 1000);
-    // }
     function startSessionTimer(initialSeconds) {
       if (typeof window === "undefined") return;
 
@@ -174,7 +158,15 @@
         }
         if (sessionStartTimeElement && sessionData?.launched_at) {
           const startTime = new Date(sessionData.launched_at._seconds * 1000);
-          sessionStartTimeElement.textContent = startTime.toLocaleString();
+          const formattedStartTime = startTime.toLocaleString("en-US", {
+            month: "short",       // "Jun"
+            day: "numeric",       // "3"
+            year: "numeric",      // "2025"
+            hour: "numeric",      // "2"
+            minute: "2-digit",    // "51"
+            hour12: true          // "PM"
+          });
+          sessionStartTimeElement.textContent = formattedStartTime;
         }
 
         const status = sessionData?.status;
