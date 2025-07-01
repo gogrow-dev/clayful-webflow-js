@@ -7,18 +7,21 @@
     const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStudentsStaging?full=true";
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
-    const studentList = document.getElementById("students-list");
+    const countStudentsInSession = document.getElementById("count-students-in-session");
+  
     const waitingText = document.getElementById("text-waiting-status");
+    const studentList = document.getElementById("students-list");
     const studentViewTable = document.getElementById("student-view-table");
+
+    const activeSessionTime = document.getElementById("active-session-time");
+    const wrapperActiveSessionTime = document.getElementById("wrapper-active-session-time");
+    const pausedSessionTime = document.getElementById("paused-session-time");
+    const wrapperPausedSessionTime = document.getElementById("wrapper-paused-session-time");
+
     const pauseBtn = document.getElementById("btn-pause-session");
     const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
-    const resumeBtn = document.getElementById("btn-resume-session");
     const pauseModal = document.getElementById("pause-modal");
-    const countStudentsInSession = document.getElementById("count-students-in-session");
-    const wrapperActiveSessionTime = document.getElementById("wrapper-active-session-time");
-    const wrapperPausedSessionTime = document.getElementById("wrapper-paused-session-time");
-    const activeSessionTime = document.getElementById("active-session-time");
-    const pausedSessionTime = document.getElementById("paused-session-time");
+    const resumeBtn = document.getElementById("btn-resume-session");
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
         !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
@@ -36,62 +39,8 @@
       Authorization: `Bearer ${token}`
     };
 
-    function startSessionTimer(initialSeconds) {
-      if (typeof window === "undefined") return;
+    // === HANDLE ONCLICK EVENTS ===
 
-      clearInterval(window._sessionTimerInterval);
-      window._sessionTimerInterval = null;
-
-      let totalTimeInSeconds = initialSeconds;
-
-      window._sessionTimerInterval = setInterval(() => {
-        totalTimeInSeconds++;
-        const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
-        const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
-        const formattedTime = `${minutes}:${seconds}`;
-
-        pausedSessionTime.textContent = formattedTime;
-        activeSessionTime.textContent = formattedTime;
-      }, 1000);
-    }
-
-    
-
-    // === Fetch session info and start timer
-    fetch(currentSessionUrl, { headers })
-      .then(res => res.json())
-      .then(sessionData => {
-        const sessionCodeElement = document.getElementById("session-code");
-
-        if (sessionCodeElement && sessionData?.session_number) {
-          sessionCodeElement.textContent = sessionData.session_number;
-        }
-
-        const status = sessionData?.status;
-        let totalSeconds = sessionData?.status_time_in_seconds ?? 0;
-
-        if (status === "paused") {
-          pauseBtn.style.display = "none";
-          resumeBtn.style.display = "flex";
-          pausedSessionTime.style.display = "flex";
-          wrapperPausedSessionTime.style.display = "flex";
-          activeSessionTime.style.display = "none";
-          wrapperActiveSessionTime.style.display = "none";
-          clearInterval(window._sessionTimerInterval);
-        } else if (status === "running") {
-          totalSeconds += sessionData?.total_session_time_in_seconds ?? 0;
-
-          pauseBtn.style.display = "flex";
-          resumeBtn.style.display = "none";
-          activeSessionTime.style.display = "flex";
-          wrapperActiveSessionTime.style.display = "flex";
-          pausedSessionTime.style.display = "none";
-          wrapperPausedSessionTime.style.display = "none";
-        }
-        startSessionTimer(totalSeconds);
-      })
-      .catch(err => console.error("Failed to load session:", err));
-    
     // === Handle pause session ===
     if (pauseBtnConfirm) {
       pauseBtnConfirm.addEventListener("click", function () {
@@ -124,6 +73,7 @@
       });
     }
 
+    // === Handle resume session ===
     if (resumeBtn) {
       resumeBtn.addEventListener("click", function () {
         fetch(updateSessionUrl, {
@@ -139,8 +89,6 @@
             resumeBtn.style.display = "none";
             pauseBtn.style.display = "flex";
 
-            activeSessionTime.style.display = "flex";
-            wrapperActiveSessionTime.style.display = "flex";
             pausedSessionTime.style.display = "none";
             wrapperPausedSessionTime.style.display = "none";
 
@@ -152,8 +100,10 @@
                 if (session?.status == "running") {
                   totalTimeInSeconds += session?.total_session_time_in_seconds ?? 0;
                 }
-                console.log("Resuming session with total time:", totalTimeInSeconds);
+
                 startSessionTimer(totalTimeInSeconds);
+                activeSessionTime.style.display = "flex";
+                wrapperActiveSessionTime.style.display = "flex";
               });
           })
           .catch(err => {
@@ -162,6 +112,68 @@
           });
       });
     }
+
+    // === Handle finish session ===
+
+    function startSessionTimer(initialSeconds) {
+      if (typeof window === "undefined") return;
+
+      clearInterval(window._sessionTimerInterval);
+      window._sessionTimerInterval = null;
+
+      let totalTimeInSeconds = initialSeconds;
+
+      window._sessionTimerInterval = setInterval(() => {
+        totalTimeInSeconds++;
+        const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
+        const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
+        const formattedTime = `${minutes}:${seconds}`;
+
+        pausedSessionTime.textContent = formattedTime;
+        activeSessionTime.textContent = formattedTime;
+      }, 1000);
+    }
+
+    // === Fetch session info and start timer
+    fetch(currentSessionUrl, { headers })
+      .then(res => res.json())
+      .then(sessionData => {
+        const sessionCodeElement = document.getElementById("session-code");
+        const sessionStartTimeElement = document.getElementById("session-started");
+
+        if (sessionCodeElement && sessionData?.session_number) {
+          sessionCodeElement.textContent = sessionData.session_number;
+        }
+        if (sessionStartTimeElement && sessionData?.launched_at) {
+          // with this format Started Jun 3, 2025, 2:51 PM
+          const startTime = new Date(sessionData.launched_at);
+          sessionStartTimeElement.textContent = startTime.toLocaleString();
+        }
+
+        const status = sessionData?.status;
+        let totalSeconds = sessionData?.status_time_in_seconds ?? 0;
+
+        if (status === "paused") {
+          pauseBtn.style.display = "none";
+          resumeBtn.style.display = "flex";
+          pausedSessionTime.style.display = "flex";
+          wrapperPausedSessionTime.style.display = "flex";
+          activeSessionTime.style.display = "none";
+          wrapperActiveSessionTime.style.display = "none";
+          clearInterval(window._sessionTimerInterval);
+        } else if (status === "running") {
+          totalSeconds += sessionData?.total_session_time_in_seconds ?? 0;
+
+          pauseBtn.style.display = "flex";
+          resumeBtn.style.display = "none";
+          activeSessionTime.style.display = "flex";
+          wrapperActiveSessionTime.style.display = "flex";
+          pausedSessionTime.style.display = "none";
+          wrapperPausedSessionTime.style.display = "none";
+        }
+        startSessionTimer(totalSeconds);
+      })
+      .catch(err => console.error("Failed to load session:", err));
 
     // === Function to fetch and render students ===
     function fetchAndRenderStudents() {
