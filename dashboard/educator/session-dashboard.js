@@ -58,12 +58,15 @@
             pauseModal.style.display = "none";
             resumeBtn.style.display = "flex";
 
-            clearInterval(window._sessionTimerInterval);
-            window._sessionTimerInterval = null;
+
 
             activeSessionTime.style.display = "none";
             wrapperActiveSessionTime.style.display = "none";
+
+            clearInterval(window._sessionTimerInterval);
+            window._sessionTimerInterval = null;
             startSessionTimer(0);
+
             pausedSessionTime.style.display = "flex";
             wrapperPausedSessionTime.style.display = "flex";
           })
@@ -103,6 +106,7 @@
                 }
 
                 startSessionTimer(totalTimeInSeconds);
+                
                 activeSessionTime.style.display = "flex";
                 wrapperActiveSessionTime.style.display = "flex";
               });
