@@ -135,8 +135,11 @@
 
     // === Handle pause session ===
     const pauseBtn = document.getElementById("btn-pause-session");
-    if (pauseBtn) {
-      pauseBtn.addEventListener("click", function () {
+    const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
+    const resumeBtn = document.getElementById("btn-resume-session");
+
+    if (pauseBtnConfirm) {
+      pauseBtnConfirm.addEventListener("click", function () {
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -147,7 +150,11 @@
             return res.json();
           })
           .then(() => {
-            // stope clock
+            if (pauseBtn) pauseBtn.style.display = "none";
+            
+            if (resumeBtn) {
+              resumeBtn.style.display = "flex";
+            }
           })
           .catch(err => {
             console.error("Failed to launch dashboard:", err);
@@ -155,5 +162,30 @@
           });
       });
     }
+    if (resumeBtn) {
+      resumeBtn.addEventListener("click", function () {
+        fetch(updateSessionUrl, {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ status: "running" })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to update session status");
+            return res.json();
+          })
+          .then(() => {
+            if (resumeBtn) resumeBtn.style.display = "none";
+            
+            if (pauseBtn) {
+              pauseBtn.style.display = "flex";
+            }
+          })
+          .catch(err => {
+            console.error("Failed to resume session:", err);
+            alert("There was a problem resuming the session. Please try again.");
+          });
+      });
+    }
+
   });
 })();
