@@ -321,8 +321,34 @@
         </div>
       `;
 
+      row.querySelector("#open-student-details").addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const sidebar = document.getElementById("sidebar-student");
+        if (!sidebar) return;
+
+        sidebar.style.display = "flex";
+
+        const sidebarName = sidebar.querySelector("#sidebar-student-name");
+        const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
+        const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
+
+        const sidebarJournalName = sidebar.querySelector("#sidebar-journal-name");
+        const sidebarJournalLink = sidebar.querySelector("#sidebar-btn-view-journal");
+
+        if (sidebarName) sidebarName.textContent = student.studentName;
+        if (sidebarEmail) sidebarEmail.textContent = student.email || "—";
+        if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
+
+        if (sidebarJournalName) sidebarJournalName.textContent = student.journalName || "—";
+        if (sidebarJournalLink) {
+          sidebarJournalLink.href = `##`;
+        }
+      });
+
       return row;
     }
+
 
     // Initial fetch
     fetchAndRenderStudents();
