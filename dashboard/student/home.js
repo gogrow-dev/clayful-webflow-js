@@ -45,10 +45,10 @@
           if (sessionBanner) {
             sessionBanner.style.display = "flex";
 
-            const totalTimeInSeconds = sessionData?.status_time_in_seconds;
+            let totalTimeInSeconds = sessionData?.status_time_in_seconds ?? 0;
 
             if (sessionData?.status == "running") {
-              totalTimeInSeconds = totalTimeInSeconds + sessionData?.total_session_time_in_seconds;
+              totalTimeInSeconds += sessionData?.total_session_time_in_seconds ?? 0;
             }
 
             const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
