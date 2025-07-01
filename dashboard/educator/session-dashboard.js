@@ -13,6 +13,7 @@
     const pauseBtn = document.getElementById("btn-pause-session");
     const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
     const resumeBtn = document.getElementById("btn-resume-session");
+    const pauseModal = document.getElementById("pause-modal");
     const countStudentsInSession = document.getElementById("count-students-in-session");
 
     if (!studentList || !waitingText || !studentViewTable) return;
@@ -40,6 +41,7 @@
           })
           .then(() => {
             if (pauseBtn) pauseBtn.style.display = "none";
+            if (pauseModal) pauseModal.style.display = "none";
             
             if (resumeBtn) {
               resumeBtn.style.display = "flex";
