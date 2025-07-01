@@ -67,7 +67,7 @@
       row.setAttribute("fs-list-element", "item");
 
       row.innerHTML = `
-        <div class="student-information width-200">
+        <div id="student-row" class="student-information width-200">
           <div class="info-wrapper">
             <div class="div-profile-pic">
               <div class="student-status-dot" id="student-status-dot"></div>
