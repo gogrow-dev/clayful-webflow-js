@@ -10,6 +10,11 @@
     const studentList = document.getElementById("students-list");
     const waitingText = document.getElementById("text-waiting-status");
     const studentViewTable = document.getElementById("student-view-table");
+    const pauseBtn = document.getElementById("btn-pause-session");
+    const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
+    const resumeBtn = document.getElementById("btn-resume-session");
+    const countStudentsInSession = document.getElementById("count-students-in-session");
+
     if (!studentList || !waitingText || !studentViewTable) return;
     studentViewTable.style.display = "none";
 
@@ -21,13 +26,72 @@
       Authorization: `Bearer ${token}`
     };
 
+    // === Handle pause session ===
+    if (pauseBtnConfirm) {
+      pauseBtnConfirm.addEventListener("click", function () {
+        fetch(updateSessionUrl, {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ status: "paused" })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to update session status");
+            return res.json();
+          })
+          .then(() => {
+            if (pauseBtn) pauseBtn.style.display = "none";
+            
+            if (resumeBtn) {
+              resumeBtn.style.display = "flex";
+            }
+          })
+          .catch(err => {
+            console.error("Failed to launch dashboard:", err);
+            alert("There was a problem launching the session. Please try again.");
+          });
+      });
+    }
+    if (resumeBtn) {
+      resumeBtn.addEventListener("click", function () {
+        fetch(updateSessionUrl, {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ status: "running" })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to update session status");
+            return res.json();
+          })
+          .then(() => {
+            if (resumeBtn) resumeBtn.style.display = "none";
+            
+            if (pauseBtn) {
+              pauseBtn.style.display = "flex";
+            }
+          })
+          .catch(err => {
+            console.error("Failed to resume session:", err);
+            alert("There was a problem resuming the session. Please try again.");
+          });
+      });
+    }
+
     // === Fetch session code ===
     fetch(currentSessionUrl, { headers })
       .then(res => res.json())
       .then(sessionData => {
         const sessionCodeElement = document.getElementById("session-code");
+
         if (sessionCodeElement && sessionData?.session_number) {
           sessionCodeElement.textContent = sessionData.session_number;
+        }
+        if (sessionData?.status === "paused") {
+          if (pauseBtn) pauseBtn.style.display = "none";
+          if (resumeBtn) resumeBtn.style.display = "flex";
+        }
+        if (sessionData?.status === "running") {
+          if (pauseBtn) pauseBtn.style.display = "flex";
+          if (resumeBtn) resumeBtn.style.display = "none";
         }
       })
       .catch(err => console.error("Failed to load session:", err));
@@ -43,7 +107,12 @@
           if (!students || students.length === 0) {
             if (waitingText) waitingText.style.display = "flex";
             if (studentViewTable) studentViewTable.style.removeProperty("display");
+            countStudentsInSession.textContent = "0";
             return;
+          }
+
+          if (countStudentsInSession) {
+            countStudentsInSession.textContent = students.length;
           }
 
           studentList.innerHTML = "";
@@ -133,59 +202,7 @@
     // Refresh every 60 seconds
     setInterval(fetchAndRenderStudents, 60000);
 
-    // === Handle pause session ===
-    const pauseBtn = document.getElementById("btn-pause-session");
-    const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
-    const resumeBtn = document.getElementById("btn-resume-session");
-
-    if (pauseBtnConfirm) {
-      pauseBtnConfirm.addEventListener("click", function () {
-        fetch(updateSessionUrl, {
-          method: "PATCH",
-          headers,
-          body: JSON.stringify({ status: "paused" })
-        })
-          .then(res => {
-            if (!res.ok) throw new Error("Failed to update session status");
-            return res.json();
-          })
-          .then(() => {
-            if (pauseBtn) pauseBtn.style.display = "none";
-            
-            if (resumeBtn) {
-              resumeBtn.style.display = "flex";
-            }
-          })
-          .catch(err => {
-            console.error("Failed to launch dashboard:", err);
-            alert("There was a problem launching the session. Please try again.");
-          });
-      });
-    }
-    if (resumeBtn) {
-      resumeBtn.addEventListener("click", function () {
-        fetch(updateSessionUrl, {
-          method: "PATCH",
-          headers,
-          body: JSON.stringify({ status: "running" })
-        })
-          .then(res => {
-            if (!res.ok) throw new Error("Failed to update session status");
-            return res.json();
-          })
-          .then(() => {
-            if (resumeBtn) resumeBtn.style.display = "none";
-            
-            if (pauseBtn) {
-              pauseBtn.style.display = "flex";
-            }
-          })
-          .catch(err => {
-            console.error("Failed to resume session:", err);
-            alert("There was a problem resuming the session. Please try again.");
-          });
-      });
-    }
+    
 
   });
 })();
