@@ -1,3 +1,5 @@
+import { fetchActiveSession } from "../utils/activeSession.js";
+
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
@@ -5,17 +7,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     const studentConfirmJoinSessionButton = document.getElementById("btn-confirm-join-session");
-    const studentJoinSessionButton = document.getElementById("btn-nav-join-session");
     const studentErrorMsg = document.getElementById("msg-error-join-session");
-
-    const sessionBanner = document.getElementById("session-banner");
-    const activeSessionMsg = document.getElementById("active-session-msg");
-    const pausedSessionMsg = document.getElementById("paused-session-msg");
-    const activeSessionTimeMsg = document.getElementById("active-session-time-msg");
-    const pausedSessionTimeMsg = document.getElementById("paused-session-time-msg");
-    const activeSessionTime = document.getElementById("active-session-time");
-    const pausedSessionTime = document.getElementById("paused-session-time");
-    const startingSoonSessionMsg = document.getElementById("starting-soon-session-msg");
 
     const token = localStorage.getItem("_ms-mid");
 
@@ -32,81 +24,7 @@
 
     const getSessionUrl = "https://student-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
 
-    function fetchActiveSession() {
-      fetch(getSessionUrl, { headers })
-        .then(res => {
-          if (!res.ok) {
-            sessionBanner.style.display = "none";
-            studentJoinSessionButton.style.display = "flex";
-            studentJoinSessionButton.disabled = false;
-            return;
-          }
-          return res.json();
-        })
-        .then(sessionData => {
-          if (!sessionData) return;
-
-          studentJoinSessionButton.style.display = "none";
-          studentJoinSessionButton.disabled = true;
-
-          if (sessionBanner) {
-            sessionBanner.style.display = "flex";
-
-            let totalTimeInSeconds = sessionData?.status_time_in_seconds ?? 0;
-
-            if (sessionData?.status == "running") {
-              totalTimeInSeconds += sessionData?.total_session_time_in_seconds ?? 0;
-            }
-
-            if (typeof window !== "undefined") {
-              clearInterval(window._sessionTimerInterval);
-              window._sessionTimerInterval = null;
-
-              window._sessionTimerInterval = setInterval(() => {
-                totalTimeInSeconds++;
-                const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
-                const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
-                const formattedTime = `${minutes}:${seconds}`;
-
-                pausedSessionTime.textContent = formattedTime;
-                activeSessionTime.textContent = formattedTime;
-              }, 1000);
-            }
-
-            if (sessionData?.status == "on_hold") {
-              startingSoonSessionMsg.style.display = "flex";
-              activeSessionTime.style.display = "none";
-              pausedSessionTime.style.display = "none";
-              activeSessionTimeMsg.style.display = "none";
-              pausedSessionTimeMsg.style.display = "none";
-              activeSessionMsg.style.display = "none";
-              pausedSessionMsg.style.display = "none";
-            } else if (sessionData?.status == "paused") {
-              startingSoonSessionMsg.style.display = "none";
-              activeSessionTime.style.display = "none";
-              pausedSessionTime.style.display = "flex";
-              activeSessionTimeMsg.style.display = "none";
-              pausedSessionTimeMsg.style.display = "flex";
-              pausedSessionTimeMsg.style.display = "flex";
-              activeSessionMsg.style.display = "none";
-              pausedSessionMsg.style.display = "flex";
-            } else if (sessionData?.status == "running") {
-              startingSoonSessionMsg.style.display = "none";
-              activeSessionTime.style.display = "flex";
-              pausedSessionTime.style.display = "none";
-              activeSessionTimeMsg.style.display = "flex";
-              pausedSessionTimeMsg.style.display = "none";
-              activeSessionMsg.style.display = "flex";
-              pausedSessionMsg.style.display = "none";
-            } else {
-              sessionBanner.style.display = "none";
-            }
-          }
-        })
-        .catch(err => console.error("Failed to get active session:", err));
-    }
-
-    fetchActiveSession();
+    fetchActiveSession(getSessionUrl);
     setInterval(fetchActiveSession, 15000);
 
     if (studentConfirmJoinSessionButton) {
