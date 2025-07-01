@@ -118,6 +118,24 @@
 
     // === Handle finish session ===
 
+    // function startSessionTimer(initialSeconds) {
+    //   if (typeof window === "undefined") return;
+
+    //   clearInterval(window._sessionTimerInterval);
+    //   window._sessionTimerInterval = null;
+
+    //   let totalTimeInSeconds = initialSeconds;
+
+    //   window._sessionTimerInterval = setInterval(() => {
+    //     totalTimeInSeconds++;
+    //     const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
+    //     const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
+    //     const formattedTime = `${minutes}:${seconds}`;
+
+    //     pausedSessionTime.textContent = formattedTime;
+    //     activeSessionTime.textContent = formattedTime;
+    //   }, 1000);
+    // }
     function startSessionTimer(initialSeconds) {
       if (typeof window === "undefined") return;
 
@@ -126,14 +144,21 @@
 
       let totalTimeInSeconds = initialSeconds;
 
-      window._sessionTimerInterval = setInterval(() => {
-        totalTimeInSeconds++;
+      function updateDisplay() {
         const minutes = Math.floor(totalTimeInSeconds / 60).toString().padStart(2, '0');
         const seconds = (totalTimeInSeconds % 60).toString().padStart(2, '0');
         const formattedTime = `${minutes}:${seconds}`;
 
         pausedSessionTime.textContent = formattedTime;
         activeSessionTime.textContent = formattedTime;
+      }
+
+      updateDisplay();
+
+      // 🔁 then start ticking every second
+      window._sessionTimerInterval = setInterval(() => {
+        totalTimeInSeconds++;
+        updateDisplay();
       }, 1000);
     }
 
