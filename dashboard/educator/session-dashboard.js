@@ -55,6 +55,43 @@
       }, 1000);
     }
 
+    
+
+    // === Fetch session info and start timer
+    fetch(currentSessionUrl, { headers })
+      .then(res => res.json())
+      .then(sessionData => {
+        const sessionCodeElement = document.getElementById("session-code");
+
+        if (sessionCodeElement && sessionData?.session_number) {
+          sessionCodeElement.textContent = sessionData.session_number;
+        }
+
+        const status = sessionData?.status;
+        let totalSeconds = sessionData?.status_time_in_seconds ?? 0;
+
+        if (status === "paused") {
+          pauseBtn.style.display = "none";
+          resumeBtn.style.display = "flex";
+          pausedSessionTime.style.display = "flex";
+          wrapperPausedSessionTime.style.display = "flex";
+          activeSessionTime.style.display = "none";
+          wrapperActiveSessionTime.style.display = "none";
+          clearInterval(window._sessionTimerInterval);
+        } else if (status === "running") {
+          totalSeconds += sessionData?.total_session_time_in_seconds ?? 0;
+
+          pauseBtn.style.display = "flex";
+          resumeBtn.style.display = "none";
+          activeSessionTime.style.display = "flex";
+          wrapperActiveSessionTime.style.display = "flex";
+          pausedSessionTime.style.display = "none";
+          wrapperPausedSessionTime.style.display = "none";
+        }
+        startSessionTimer(totalSeconds);
+      })
+      .catch(err => console.error("Failed to load session:", err));
+    
     // === Handle pause session ===
     if (pauseBtnConfirm) {
       pauseBtnConfirm.addEventListener("click", function () {
@@ -74,12 +111,11 @@
 
             clearInterval(window._sessionTimerInterval);
             window._sessionTimerInterval = null;
-
-            pausedSessionTime.textContent = "00:00";
             activeSessionTime.style.display = "none";
             wrapperActiveSessionTime.style.display = "none";
             pausedSessionTime.style.display = "flex";
             wrapperPausedSessionTime.style.display = "flex";
+            startSessionTimer(0);
           })
           .catch(err => {
             console.error("Failed to pause session:", err);
@@ -108,12 +144,16 @@
             pausedSessionTime.style.display = "none";
             wrapperPausedSessionTime.style.display = "none";
 
-            // Optionally fetch session again for accurate time
             fetch(currentSessionUrl, { headers })
               .then(res => res.json())
               .then(session => {
-                const total = (session.total_session_time_in_seconds || 0) + (session.status_time_in_seconds || 0);
-                startSessionTimer(total);
+                let totalTimeInSeconds = session?.status_time_in_seconds ?? 0;
+
+                if (session?.status == "running") {
+                  totalTimeInSeconds += session?.total_session_time_in_seconds ?? 0;
+                }
+                console.log("Resuming session with total time:", totalTimeInSeconds);
+                startSessionTimer(totalTimeInSeconds);
               });
           })
           .catch(err => {
@@ -122,40 +162,6 @@
           });
       });
     }
-
-    // === Fetch session info and start timer
-    fetch(currentSessionUrl, { headers })
-      .then(res => res.json())
-      .then(sessionData => {
-        const sessionCodeElement = document.getElementById("session-code");
-
-        if (sessionCodeElement && sessionData?.session_number) {
-          sessionCodeElement.textContent = sessionData.session_number;
-        }
-
-        const status = sessionData?.status;
-        const totalSeconds = (sessionData?.total_session_time_in_seconds || 0) + (sessionData?.status_time_in_seconds || 0);
-
-        if (status === "paused") {
-          pauseBtn.style.display = "none";
-          resumeBtn.style.display = "flex";
-          pausedSessionTime.textContent = "00:00";
-          pausedSessionTime.style.display = "flex";
-          wrapperPausedSessionTime.style.display = "flex";
-          activeSessionTime.style.display = "none";
-          wrapperActiveSessionTime.style.display = "none";
-          clearInterval(window._sessionTimerInterval);
-        } else if (status === "running") {
-          pauseBtn.style.display = "flex";
-          resumeBtn.style.display = "none";
-          activeSessionTime.style.display = "flex";
-          wrapperActiveSessionTime.style.display = "flex";
-          pausedSessionTime.style.display = "none";
-          wrapperPausedSessionTime.style.display = "none";
-          startSessionTimer(totalSeconds);
-        }
-      })
-      .catch(err => console.error("Failed to load session:", err));
 
     // === Function to fetch and render students ===
     function fetchAndRenderStudents() {
