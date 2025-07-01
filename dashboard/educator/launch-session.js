@@ -122,7 +122,7 @@
             return res.json();
           })
           .then(() => {
-            window.location.href = "/dashboard/clayful-session-dashboard";
+            window.location.href = DASHBOARD_URL;
           })
           .catch(err => {
             console.error("Failed to launch dashboard:", err);

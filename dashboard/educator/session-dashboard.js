@@ -1,6 +1,7 @@
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`educator/session-dashboard.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
+  HOME_PAGE_URL = "/educators-home"
 
   document.addEventListener("DOMContentLoaded", function () {
     const currentSessionUrl = "https://educator-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
@@ -22,9 +23,10 @@
     const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
     const pauseModal = document.getElementById("pause-modal");
     const resumeBtn = document.getElementById("btn-resume-session");
+    const finishBtn = document.getElementById("btn-finish-session");
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
-        !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
+        !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal || !finishBtn
     ) return;
 
     studentViewTable.style.display = "none";
@@ -38,6 +40,67 @@
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     };
+
+    // === Fetch session info and start timer
+    fetch(currentSessionUrl, { headers })
+      .then(res => res.json())
+      .then(sessionData => {
+        if (!sessionData) {
+          console.error("No active session found");
+          window.location.href = HOME_PAGE_URL;
+          return;
+        }
+        const sessionCodeElement = document.getElementById("session-code");
+        const sessionStartTimeElement = document.getElementById("session-started");
+
+        if (sessionCodeElement && sessionData?.session_number) {
+          sessionCodeElement.textContent = sessionData.session_number;
+        }
+        if (sessionStartTimeElement && sessionData?.launched_at) {
+          const startTime = new Date(sessionData.launched_at._seconds * 1000);
+          const formattedStartTime = startTime.toLocaleString("en-US", {
+            month: "short",       // "Jun"
+            day: "numeric",       // "3"
+            year: "numeric",      // "2025"
+            hour: "numeric",      // "2"
+            minute: "2-digit",    // "51"
+            hour12: true          // "PM"
+          });
+          sessionStartTimeElement.textContent = formattedStartTime;
+        }
+
+        const status = sessionData?.status;
+        let totalSeconds = sessionData?.status_time_in_seconds ?? 0;
+
+        if (status === "paused") {
+          pauseBtn.style.display = "none";
+          resumeBtn.style.display = "flex";
+
+          activeSessionTime.style.display = "none";
+          wrapperActiveSessionTime.style.display = "none";
+
+          clearInterval(window._sessionTimerInterval);
+          startSessionTimer(totalSeconds);
+
+          pausedSessionTime.style.display = "flex";
+          wrapperPausedSessionTime.style.display = "flex";
+        } else if (status === "running") {
+          totalSeconds += sessionData?.total_session_time_in_seconds ?? 0;
+
+          pauseBtn.style.display = "flex";
+          resumeBtn.style.display = "none";
+
+          pausedSessionTime.style.display = "none";
+          wrapperPausedSessionTime.style.display = "none";
+
+          startSessionTimer(totalSeconds);
+
+          activeSessionTime.style.display = "flex";
+          wrapperActiveSessionTime.style.display = "flex";
+        }
+        
+      })
+      .catch(err => console.error("Failed to load session:", err));
 
     // === HANDLE ONCLICK EVENTS ===
 
@@ -111,14 +174,30 @@
           })
           .catch(err => {
             console.error("Failed to resume session:", err);
-            alert("There was a problem resuming the session. Please try again.");
           });
       });
     }
 
     // === Handle finish session ===
-
-
+    if (finishBtn) {
+      finishBtn.addEventListener("click", function () {
+        fetch(updateSessionUrl, {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({ status: "finished" })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to update session status");
+            return res.json();
+          })
+          .then(() => {
+            window.location.href = "/educators-home";
+          })
+          .catch(err => {
+            console.error("Failed to finish session:", err);
+          });
+      });
+    }
 
     function startSessionTimer(initialSeconds) {
       if (typeof window === "undefined") return;
@@ -139,68 +218,11 @@
 
       updateDisplay();
 
-      // 🔁 then start ticking every second
       window._sessionTimerInterval = setInterval(() => {
         totalTimeInSeconds++;
         updateDisplay();
       }, 1000);
     }
-
-    // === Fetch session info and start timer
-    fetch(currentSessionUrl, { headers })
-      .then(res => res.json())
-      .then(sessionData => {
-        const sessionCodeElement = document.getElementById("session-code");
-        const sessionStartTimeElement = document.getElementById("session-started");
-
-        if (sessionCodeElement && sessionData?.session_number) {
-          sessionCodeElement.textContent = sessionData.session_number;
-        }
-        if (sessionStartTimeElement && sessionData?.launched_at) {
-          const startTime = new Date(sessionData.launched_at._seconds * 1000);
-          const formattedStartTime = startTime.toLocaleString("en-US", {
-            month: "short",       // "Jun"
-            day: "numeric",       // "3"
-            year: "numeric",      // "2025"
-            hour: "numeric",      // "2"
-            minute: "2-digit",    // "51"
-            hour12: true          // "PM"
-          });
-          sessionStartTimeElement.textContent = formattedStartTime;
-        }
-
-        const status = sessionData?.status;
-        let totalSeconds = sessionData?.status_time_in_seconds ?? 0;
-
-        if (status === "paused") {
-          pauseBtn.style.display = "none";
-          resumeBtn.style.display = "flex";
-
-          activeSessionTime.style.display = "none";
-          wrapperActiveSessionTime.style.display = "none";
-
-          clearInterval(window._sessionTimerInterval);
-          startSessionTimer(totalSeconds);
-
-          pausedSessionTime.style.display = "flex";
-          wrapperPausedSessionTime.style.display = "flex";
-        } else if (status === "running") {
-          totalSeconds += sessionData?.total_session_time_in_seconds ?? 0;
-
-          pauseBtn.style.display = "flex";
-          resumeBtn.style.display = "none";
-
-          pausedSessionTime.style.display = "none";
-          wrapperPausedSessionTime.style.display = "none";
-
-          startSessionTimer(totalSeconds);
-
-          activeSessionTime.style.display = "flex";
-          wrapperActiveSessionTime.style.display = "flex";
-        }
-        
-      })
-      .catch(err => console.error("Failed to load session:", err));
 
     // === Function to fetch and render students ===
     function fetchAndRenderStudents() {
