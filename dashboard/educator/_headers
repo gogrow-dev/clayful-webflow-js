@@ -2,5 +2,5 @@
   Cache-Control: no-store
 /launch-session.js
   Cache-Control: no-store
-/dashboard.js
+/session-dashboard.js
   Cache-Control: no-store
