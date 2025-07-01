@@ -54,6 +54,11 @@
             if (resumeBtn) {
               resumeBtn.style.display = "flex";
             }
+            activeSessionTime.style.display = "none";
+            wrapperActiveSessionTime.style.display = "none";
+            pausedSessionTime.style.display = "flex";
+            wrapperPausedSessionTime.style.display = "flex";
+            
           })
           .catch(err => {
             console.error("Failed to launch dashboard:", err);
@@ -78,6 +83,10 @@
             if (pauseBtn) {
               pauseBtn.style.display = "flex";
             }
+            activeSessionTime.style.display = "flex";
+            wrapperActiveSessionTime.style.display = "flex";
+            pausedSessionTime.style.display = "none";
+            wrapperPausedSessionTime.style.display = "none";
           })
           .catch(err => {
             console.error("Failed to resume session:", err);
@@ -102,6 +111,12 @@
         if (sessionData?.status === "running") {
           if (pauseBtn) pauseBtn.style.display = "flex";
           if (resumeBtn) resumeBtn.style.display = "none";
+        }
+
+         let totalTimeInSeconds = sessionData?.status_time_in_seconds ?? 0;
+
+        if (sessionData?.status == "running") {
+          totalTimeInSeconds += sessionData?.total_session_time_in_seconds ?? 0;
         }
 
         if (typeof window !== "undefined") {
