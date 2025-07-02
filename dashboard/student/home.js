@@ -11,11 +11,9 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
     const studentContinueJoinSessionButton = document.getElementById("btn-continue-join-session");
     const continueErrorMsg = document.getElementById("msg-error-name-validation");
     const studentJoinSessionButton = document.getElementById("btn-nav-join-session");
-    // const modalPart1 = document.getElementById("join-class-modal-p1");
-    // const modalPart2 = document.getElementById("join-class-modal-p2");
+    const modalPart1 = document.getElementById("join-class-modal-p1");
+    const modalPart2 = document.getElementById("join-class-modal-p2");
     const modalHeader = document.getElementById("join-class-modal-header");
-    const modalPart1 = document.querySelector(".formjoinsession-part1");
-    const modalPart2 = document.querySelector(".formjoinsession-part2");
 
     const sessionCodeInput = document.getElementById("session-code");
     const emojiImg = document.getElementById("emoji-selected");
@@ -95,6 +93,8 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
         const sessionNumber = sessionCodeInput?.value?.trim();
         const studentNameValue = studentName?.value?.trim();
 
+        console.log(sessionNumber);
+        console.log(studentNameValue);
         if (!sessionNumber || !studentNameValue) {
           if (continueErrorMsg) continueErrorMsg.style.display = "flex";
         } else {
