@@ -8,6 +8,12 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   document.addEventListener("DOMContentLoaded", function () {
     const studentConfirmJoinSessionButton = document.getElementById("btn-confirm-join-session");
     const studentErrorMsg = document.getElementById("msg-error-join-session");
+    const studentContinueJoinsSessionButton = document.getElementById("btn-continue-join-session");
+    const continueErrorMsg = document.getElementById("msg-error-name-validation");
+
+    const sessionCodeInput = document.getElementById("session-code");
+    const emojiImg = document.getElementById("emoji-selected");
+    const studentName = document.getElementById("student-name");
 
     const token = localStorage.getItem("_ms-mid");
 
@@ -34,9 +40,6 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
         if (isProcessingJoinSession) return;
         isProcessingJoinSession = true;
 
-        const sessionCodeInput = document.getElementById("session-code");
-        const emojiImg = document.getElementById("emoji-selected");
-        const studentName = document.getElementById("student-name");
 
         const sessionNumber = sessionCodeInput?.value?.trim();
         const emojiUrl = emojiImg?.src || "";
@@ -71,6 +74,27 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
         console.log("Successfully joined session");
         window.location.href = "/kids/journals";
         isProcessingJoinSession = false;
+      });
+    }
+
+    if (studentContinueJoinsSessionButton) {
+      const validateFields = () => {
+        const sessionNumber = sessionCodeInput?.value?.trim();
+        const studentNameValue = studentName?.value?.trim();
+        studentContinueJoinsSessionButton.disabled = !sessionNumber || !studentNameValue;
+      };
+
+      sessionCodeInput?.addEventListener("input", validateFields);
+      studentName?.addEventListener("input", validateFields);
+      validateFields();
+
+      studentContinueJoinsSessionButton.addEventListener("click", () => {
+        const sessionNumber = sessionCodeInput?.value?.trim();
+        const studentNameValue = studentName?.value?.trim();
+
+        if (!sessionNumber || !studentNameValue) {
+          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+        }
       });
     }
   });
