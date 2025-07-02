@@ -8,9 +8,9 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   document.addEventListener("DOMContentLoaded", function () {
     const studentConfirmJoinSessionButton = document.getElementById("btn-confirm-join-session");
     const studentErrorMsg = document.getElementById("msg-error-join-session");
-    const studentContinueJoinsSessionButton = document.getElementById("btn-continue-join-session");
+    const studentContinueJoinSessionButton = document.getElementById("btn-continue-join-session");
     const continueErrorMsg = document.getElementById("msg-error-name-validation");
-    const studentJoinSessionButton = document.getElementById("btn-confirm-join-session");
+    const studentJoinSessionButton = document.getElementById("btn-nav-join-session");
 
     const sessionCodeInput = document.getElementById("session-code");
     const emojiImg = document.getElementById("emoji-selected");
@@ -35,7 +35,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
     setInterval(() => fetchActiveSession(getSessionUrl, headers), 15000);
 
     if (studentJoinSessionButton) {
-      studentJoinSessionButton.addEventListener("click", async () => {
+      studentJoinSessionButton.addEventListener("click", () => {
         if (studentErrorMsg) studentErrorMsg.style.display = "none";
         if (continueErrorMsg) continueErrorMsg.style.display = "none";
       });
@@ -85,18 +85,18 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       });
     }
 
-    if (studentContinueJoinsSessionButton) {
+    if (studentContinueJoinSessionButton) {
       const validateFields = () => {
         const sessionNumber = sessionCodeInput?.value?.trim();
         const studentNameValue = studentName?.value?.trim();
         const disabled = !sessionNumber || !studentNameValue;
 
         if (disabled) {
-          studentContinueJoinsSessionButton.classList.add("disabled");
-          studentContinueJoinsSessionButton.setAttribute("aria-disabled", "true");
+          studentContinueJoinSessionButton.classList.add("disabled");
+          studentContinueJoinSessionButton.setAttribute("aria-disabled", "true");
         } else {
-          studentContinueJoinsSessionButton.classList.remove("disabled");
-          studentContinueJoinsSessionButton.setAttribute("aria-disabled", "false");
+          studentContinueJoinSessionButton.classList.remove("disabled");
+          studentContinueJoinSessionButton.setAttribute("aria-disabled", "false");
         }
         if (continueErrorMsg) continueErrorMsg.style.display = "none";
       };
@@ -105,7 +105,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       studentName?.addEventListener("input", validateFields);
       validateFields();
 
-      studentContinueJoinsSessionButton.addEventListener("click", (e) => {
+      studentContinueJoinSessionButton.addEventListener("click", (e) => {
         const sessionNumber = sessionCodeInput?.value?.trim();
         const studentNameValue = studentName?.value?.trim();
 
