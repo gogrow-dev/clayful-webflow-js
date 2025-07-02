@@ -99,8 +99,8 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
           if (continueErrorMsg) continueErrorMsg.style.display = "flex";
         } else {
           if (modalHeader) modalHeader.style.display = "none";
-          if (modalPart1) part1.style.display = "none";
-          if (modalPart2) part2.style.display = "flex";
+          if (modalPart1) modalPart1.style.display = "none";
+          if (modalPart2) modalPart2.style.display = "flex";
           if (continueErrorMsg) continueErrorMsg.style.display = "none";
         }
       });
