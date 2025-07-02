@@ -1,3 +1,5 @@
+import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/utils/active-session.js";
+
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`educator/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
