@@ -88,12 +88,15 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       studentName?.addEventListener("input", validateFields);
       validateFields();
 
-      studentContinueJoinsSessionButton.addEventListener("click", () => {
+      studentContinueJoinsSessionButton.addEventListener("click", (e) => {
         const sessionNumber = sessionCodeInput?.value?.trim();
         const studentNameValue = studentName?.value?.trim();
 
         if (!sessionNumber || !studentNameValue) {
+          e.preventDefault();
           if (continueErrorMsg) continueErrorMsg.style.display = "block";
+        } else {
+          if (continueErrorMsg) continueErrorMsg.style.display = "none";
         }
       });
     }
