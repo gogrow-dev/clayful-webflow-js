@@ -93,7 +93,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
         const studentNameValue = studentName?.value?.trim();
 
         if (!sessionNumber || !studentNameValue) {
-          if (studentErrorMsg) studentErrorMsg.style.display = "block";
+          if (continueErrorMsg) continueErrorMsg.style.display = "block";
         }
       });
     }
