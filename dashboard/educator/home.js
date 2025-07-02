@@ -22,7 +22,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       Authorization: `Bearer ${token}`
     };
 
-    const getSessionUrl = "https://student-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
+    const getSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStaging";
 
     fetchActiveSession(getSessionUrl, headers);
     setInterval(() => fetchActiveSession(getSessionUrl, headers), 15000);
