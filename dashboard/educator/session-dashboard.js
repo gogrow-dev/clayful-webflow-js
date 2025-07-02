@@ -26,6 +26,7 @@
     const endBtn = document.getElementById("btn-end-session");
 
     const sidebar = document.getElementById("sidebar-student");
+    const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
     const studentSidebarBg = document.getElementById("student-sidebar-bg");
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
@@ -205,9 +206,19 @@
       });
     }
 
-    // === Handle sidebar close ===
+    // === Handle sidebar close on background ===
     if (studentSidebarBg) {
       studentSidebarBg.addEventListener("click", function () {
+        const sidebar = document.getElementById("sidebar-student");
+        if (sidebar) {
+          sidebar.style.display = "none";
+        }
+      });
+    }
+
+    // === Handle sidebar close on x button ===
+    if (sidebarCloseBtn) {
+      sidebarCloseBtn.addEventListener("click", function () {
         const sidebar = document.getElementById("sidebar-student");
         if (sidebar) {
           sidebar.style.display = "none";
