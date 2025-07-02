@@ -89,25 +89,6 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
     }
 
     if (studentContinueJoinSessionButton) {
-      const validateFields = () => {
-        const sessionNumber = sessionCodeInput?.value?.trim();
-        const studentNameValue = studentName?.value?.trim();
-        const disabled = !sessionNumber || !studentNameValue;
-
-        if (disabled) {
-          studentContinueJoinSessionButton.classList.add("disabled");
-          studentContinueJoinSessionButton.setAttribute("aria-disabled", "true");
-        } else {
-          studentContinueJoinSessionButton.classList.remove("disabled");
-          studentContinueJoinSessionButton.setAttribute("aria-disabled", "false");
-        }
-        if (continueErrorMsg) continueErrorMsg.style.display = "none";
-      };
-
-      sessionCodeInput?.addEventListener("input", validateFields);
-      studentName?.addEventListener("input", validateFields);
-      validateFields();
-
       studentContinueJoinSessionButton.addEventListener("click", () => {
         const sessionNumber = sessionCodeInput?.value?.trim();
         const studentNameValue = studentName?.value?.trim();
