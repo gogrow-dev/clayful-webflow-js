@@ -1,5 +1,6 @@
 export function fetchActiveSession(
-  getSessionUrl
+  getSessionUrl,
+  headers,
 ) {
   const studentJoinSessionButton = document.getElementById("btn-nav-join-session");
   const educatorLaunchSessionButton = document.getElementById("btn-nav-launch-session");
