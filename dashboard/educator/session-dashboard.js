@@ -23,7 +23,10 @@
     const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
     const pauseModal = document.getElementById("pause-modal");
     const resumeBtn = document.getElementById("btn-resume-session");
-    const finishBtn = document.getElementById("btn-finish-session");
+    const endBtn = document.getElementById("btn-end-session");
+
+    const sidebar = document.getElementById("sidebar-student");
+    const studentSidebarBg = document.getElementById("student-sidebar-bg");
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
         !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
@@ -182,8 +185,8 @@
     }
 
     // === Handle finish session ===
-    if (finishBtn) {
-      finishBtn.addEventListener("click", function () {
+    if (endBtn) {
+      endBtn.addEventListener("click", function () {
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -199,6 +202,16 @@
           .catch(err => {
             console.error("Failed to finish session:", err);
           });
+      });
+    }
+
+    // === Handle sidebar close ===
+    if (studentSidebarBg) {
+      studentSidebarBg.addEventListener("click", function () {
+        const sidebar = document.getElementById("sidebar-student");
+        if (sidebar) {
+          sidebar.style.display = "none";
+        }
       });
     }
 
@@ -325,15 +338,14 @@
       row.querySelector("#open-student-details").addEventListener("click", function (e) {
         e.preventDefault();
 
-        const sidebar = document.getElementById("sidebar-student");
+        
         if (sidebar){
-
           sidebar.style.display = "flex";
-          const sidebarPanel = sidebar.querySelector(".sidebar-dashboard");
-          if (sidebarPanel) {
-            sidebarPanel.style.opacity = "1";
-            // sidebarPanel.style.transform = "translate3d(0, 0, 0)";
-          }
+          // const sidebarPanel = sidebar.querySelector(".sidebar-dashboard");
+          // if (sidebarPanel) {
+          //   sidebarPanel.style.opacity = "1";
+          //   sidebarPanel.style.transform = "translate3d(0, 0, 0)";
+          // }
           
           const sidebarName = sidebar.querySelector("#sidebar-student-name");
           const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
