@@ -14,6 +14,8 @@ export function fetchActiveSession(
   const pausedSessionTime = document.getElementById("paused-session-time");
   const startingSoonSessionMsg = document.getElementById("starting-soon-session-msg");
 
+  console.log("LLAMO");
+
   fetch(getSessionUrl, { headers })
     .then(res => {
       if (!res.ok) {
