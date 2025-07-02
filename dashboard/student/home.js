@@ -25,7 +25,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
     const getSessionUrl = "https://student-getactivesessionstaging-7w65flzt3q-uc.a.run.app";
 
     fetchActiveSession(getSessionUrl, headers);
-    setInterval(fetchActiveSession(getSessionUrl, headers), 15000);
+    setInterval(() => fetchActiveSession(getSessionUrl, headers), 15000);
 
     if (studentConfirmJoinSessionButton) {
       let isProcessingJoinSession = false;
