@@ -4,6 +4,7 @@ export function fetchActiveSession(
 ) {
   const studentJoinSessionButton = document.getElementById("btn-nav-join-session");
   const educatorLaunchSessionButton = document.getElementById("btn-nav-launch-session");
+  const educatorGoToSessionButton = document.getElementById("open-dashboard");
 
   const sessionBanner = document.getElementById("session-banner");
   const activeSessionMsg = document.getElementById("active-session-msg");
@@ -14,7 +15,7 @@ export function fetchActiveSession(
   const pausedSessionTime = document.getElementById("paused-session-time");
   const startingSoonSessionMsg = document.getElementById("starting-soon-session-msg");
 
-  console.log("LLAMO");
+  let goToSessionHandler = null;
 
   fetch(getSessionUrl, { headers })
     .then(res => {
@@ -26,6 +27,8 @@ export function fetchActiveSession(
         } else if (educatorLaunchSessionButton) {
           educatorLaunchSessionButton.style.display = "flex";
           educatorLaunchSessionButton.disabled = false;
+          educatorGoToSessionButton.style.display = "none";
+          educatorLaunchSessionButton.disabled = true;
         }
 
         return;
@@ -41,6 +44,8 @@ export function fetchActiveSession(
       } else if (educatorLaunchSessionButton) {
         educatorLaunchSessionButton.style.display = "none";
         educatorLaunchSessionButton.disabled = true;
+        educatorGoToSessionButton.style.display = "flex";
+        educatorLaunchSessionButton.disabled = false;
       }
 
       if (sessionBanner) {
@@ -81,7 +86,6 @@ export function fetchActiveSession(
           pausedSessionTime.style.display = "flex";
           activeSessionTimeMsg.style.display = "none";
           pausedSessionTimeMsg.style.display = "flex";
-          pausedSessionTimeMsg.style.display = "flex";
           activeSessionMsg.style.display = "none";
           pausedSessionMsg.style.display = "flex";
         } else if (sessionData?.status == "running") {
@@ -94,6 +98,26 @@ export function fetchActiveSession(
           pausedSessionMsg.style.display = "none";
         } else {
           sessionBanner.style.display = "none";
+        }
+
+        if (educatorGoToSessionButton) {
+          if (goToSessionHandler) {
+            educatorGoToSessionButton.removeEventListener("click", goToSessionHandler);
+          }
+          if (sessionData?.status == "on_hold") {
+            goToSessionHandler = function () {
+              window.location.href = "/dashboard/launch-session";
+            };
+          } else if (sessionData?.status == "paused" || sessionData?.status == "running") {
+            goToSessionHandler = function () {
+              window.location.href = "/dashboard/clayful-session-dashboard";
+            };
+          } else {
+            goToSessionHandler = null;
+          }
+          if (goToSessionHandler) {
+            educatorGoToSessionButton.addEventListener("click", goToSessionHandler);
+          }
         }
       }
     })
