@@ -10,6 +10,12 @@
         console.log("🚀 [CDN] Typeform screen changed (started)");
         console.log("TypeformID:", window.typeformId);
 
+        const itemId = document.querySelector('.w-dyn-item')?.getAttribute('data-wf-item-id');
+        const typeformIdFromHere = "{{wf {&quot;path&quot;:&quot;typeform-id&quot;,&quot;type&quot;:&quot;PlainText&quot;\} }}";
+        const journalName = "{{wf {&quot;path&quot;:&quot;name&quot;,&quot;type&quot;:&quot;PlainText&quot;\} }}";
+        console.log("TypeformID from here:", typeformIdFromHere);
+        console.log("Journalname:", journalName);
+
         const token = localStorage.getItem("_ms-mid");
 
         if (!token) {
