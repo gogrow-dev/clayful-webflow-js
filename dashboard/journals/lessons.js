@@ -1,6 +1,5 @@
 (function () {
-  // Optional: fallback value if used before assignment
-  window.typeformId = window.typeformId || "";
+  const startJournalUrl = "https://us-central1-clayful-app.cloudfunctions.net/student-startJournalStaging";
 
   // This will run when the Typeform screen changes
   window.handleTypeformScreenChange = function () {
@@ -25,6 +24,27 @@
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
         };
+        fetch(startJournalUrl, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ journal: {
+            typeformId: window.typeformId,
+            description: window.description,
+            name: window.journalName,
+            featuredImage: window.featuredImage
+          } })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to update session status");
+            return res.json();
+          })
+          .then(() => {
+            window.location.href = DASHBOARD_URL;
+          })
+          .catch(err => {
+            console.error("Failed to launch dashboard:", err);
+            alert("There was a problem launching the session. Please try again.");
+          });
     }
 
 
