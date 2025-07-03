@@ -308,7 +308,7 @@
         <div class="student-information width-140">
           <div class="info-wrapper" id="student-consent">
             <div class="sudent-consent-status">
-              <p class="text_xl_dashboard">${student.hasConsent ? "✅" : "❌"}</p>
+              <p class="text_xl_dashboard">${student.consentStatus?.trim().charAt(0) || "❌"}</p>
             </div>
           </div>
         </div>
@@ -316,20 +316,23 @@
         <div class="student-information width-200">
           <div class="info-wrapper">
             <div class="sudent-journal">
-              <p class="text_m_dashboard" id="student-journal-name" fs-list-field="journalName">${student.journalName || "—"}</p>
-              <p class="text_m_dashboard opacity_60" id="student-journal-desc" fs-list-field="journalDescription">${student.journalDescription || ""}</p>
+              <p class="text_m_dashboard" id="student-journal-name" fs-list-field="journalName">${student.active_journal?.name || "—"}</p>
+              <p class="text_m_dashboard opacity_60" id="student-journal-desc" fs-list-field="journalDescription">${student.active_journal?.description || ""}</p>
             </div>
           </div>
         </div>
 
         <div class="student-information width-140 status">
           <div class="status-journal">
-            <div class="student-journal-status-dot" id="student-journal-status-dot"></div>
+            ${student.active_journal ? '<div class="student-journal-status-dot-started" id="student-journal-status-dot"></div>' : ''}
             <div class="sudent-status">
-              <p class="text_m_dashboard" id="student-journal-status" fs-list-field="status">${student.status || "Not started"}</p>
+              <p class="text_m_dashboard" id="student-journal-status" fs-list-field="status">
+                ${student.active_journal ? "Started" : ""}
+              </p>
             </div>
           </div>
         </div>
+
 
         <div class="student-information width-140">
           <div class="info-wrapper">
@@ -352,27 +355,35 @@
         
         if (sidebar){
           sidebar.style.display = "flex";
-          // const sidebarPanel = sidebar.querySelector(".sidebar-dashboard");
-          // if (sidebarPanel) {
-          //   sidebarPanel.style.opacity = "1";
-          //   sidebarPanel.style.transform = "translate3d(0, 0, 0)";
-          // }
           
           const sidebarName = sidebar.querySelector("#sidebar-student-name");
           const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
           const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
           
           const sidebarJournalName = sidebar.querySelector("#sidebar-journal-name");
+          const sidebarJournalDesc = sidebar.querySelector("#sidebar-journal-desc");
           const sidebarJournalLink = sidebar.querySelector("#sidebar-btn-view-journal");
           
           if (sidebarName) sidebarName.textContent = student.studentName;
-          if (sidebarEmail) sidebarEmail.textContent = student.email || "—";
+          if (sidebarEmail) sidebarEmail.textContent = student.email || "-";
           if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
           
-          if (sidebarJournalName) sidebarJournalName.textContent = student.journalName || "—";
+          if (sidebarJournalName) sidebarJournalName.textContent = student.active_journal.name || "-";
+          if (sidebarJournalDesc) sidebarJournalDesc.textContent = student.active_journal.description || "—";
           if (sidebarJournalLink) {
             sidebarJournalLink.href = `##`;
           }
+          const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
+          const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
+
+          if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
+            if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
+            if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
+          } else {
+            if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
+            if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
+          }
+
         } else {
           console.error("Sidebar element not found");
         }

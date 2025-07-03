@@ -39,11 +39,10 @@
             return res.json();
           })
           .then(() => {
-            window.location.href = DASHBOARD_URL;
+            console.log("Journal started successfully");
           })
           .catch(err => {
-            console.error("Failed to launch dashboard:", err);
-            alert("There was a problem launching the session. Please try again.");
+            console.error("Failed to start journal:", err);
           });
     }
 
