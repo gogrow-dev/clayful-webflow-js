@@ -11,6 +11,7 @@
         console.log("Description:", window.description);
         console.log("Journal Name:", window.journalName);
         console.log("Featured Image:", window.featuredImage);
+        console.log("URL:", window.location.href);
 
         const token = localStorage.getItem("_ms-mid");
 
@@ -24,6 +25,7 @@
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
         };
+
         fetch(startJournalUrl, {
           method: "POST",
           headers,
@@ -31,7 +33,8 @@
             typeformId: window.typeformId,
             description: window.description,
             name: window.journalName,
-            featuredImage: window.featuredImage
+            featuredImage: window.featuredImage,
+            url: window.location.href
           } })
         })
           .then(res => {
