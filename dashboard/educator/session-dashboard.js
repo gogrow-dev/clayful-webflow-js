@@ -289,6 +289,13 @@
       row.id = "student-row";
       row.setAttribute("fs-list-element", "item");
 
+      let formattedTime = "—";
+      if (student.activeJournal && student.timeSpentInSeconds) {
+        const seconds = (student.timeSpentInSeconds % 60).toString().padStart(2, '0');
+        const minutes = Math.floor(student.timeSpentInSeconds / 60).toString().padStart(2, '0');
+        formattedTime = `${minutes}:${seconds}`;
+      }
+
       row.innerHTML = `
         <div class="student-information width-200">
           <div class="info-wrapper">
@@ -337,7 +344,7 @@
         <div class="student-information width-140">
           <div class="info-wrapper">
             <div class="sudent-time">
-              <p class="text_m_dashboard" id="student-time-spent" fs-list-field="timeSpent">${student.timeSpent || "—"}</p>
+              <p class="text_m_dashboard" id="student-time-spent" fs-list-field="timeSpent">${formattedTime}</p>
             </div>
           </div>
         </div>
@@ -363,18 +370,20 @@
           const sidebarJournalName = sidebar.querySelector("#sidebar-journal-name");
           const sidebarJournalDesc = sidebar.querySelector("#sidebar-journal-desc");
           const sidebarJournalLink = sidebar.querySelector("#sidebar-btn-view-journal");
-          
+          const sidebarTimeSpent = sidebar.querySelector("#sidebar-student-time-spent");
+
           if (sidebarName) sidebarName.textContent = student.studentName;
           if (sidebarEmail) sidebarEmail.textContent = student.email || "-";
           if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
           
           if (sidebarJournalName) sidebarJournalName.textContent = student.activeJournal.name || "-";
           if (sidebarJournalDesc) sidebarJournalDesc.textContent = student.activeJournal.description || "—";
-          if (sidebarJournalLink) {
-            sidebarJournalLink.href = student.activeJournal?.url || "#";
-          }
+          if (sidebarJournalLink) sidebarJournalLink.href = student.activeJournal?.url || "#";
+          if (sidebarTimeSpent) sidebarTimeSpent.textContent = formattedTime;
+
+
           const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
-          const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
+          const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");      
 
           if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
             if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
@@ -397,6 +406,6 @@
     fetchAndRenderStudents();
 
     // Refresh every 60 seconds
-    setInterval(fetchAndRenderStudents, 60000);
+    setInterval(fetchAndRenderStudents, 15000);
   });
 })();
