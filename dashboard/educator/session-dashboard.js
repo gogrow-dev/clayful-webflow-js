@@ -6,6 +6,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     const currentSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStaging";
     const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStudentsStaging?full=true";
+    const studentsJournalsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStudentJournalsStaging";
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
     const countStudentsInSession = document.getElementById("count-students-in-session");
@@ -283,6 +284,20 @@
         });
     }
 
+    // == fetch and render sidebar student journals
+    function fetchAndRenderSidebarStudentJournals(studentUserId) {
+      fetch(`${studentsJournalsUrl}?studentUserId=${studentUserId}`, { headers })
+        .then(res => res.json())
+        .then(data => {
+          const journals = data?.journals || [];
+          console.log("Fetched student journals:", journals);
+        })
+        .catch(err => {
+          console.error("Failed to fetch student journals", err);
+        });
+    }
+
+
     function createStudentRow(student) {
       const row = document.createElement("div");
       row.className = "students-item";
@@ -360,7 +375,7 @@
       row.querySelector("#open-student-details").addEventListener("click", function (e) {
         e.preventDefault();
 
-        
+        fetchAndRenderSidebarStudentJournals(student.id);
         if (sidebar){
           sidebar.style.display = "flex";
           
