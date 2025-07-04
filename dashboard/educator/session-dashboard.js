@@ -290,9 +290,10 @@
       row.setAttribute("fs-list-element", "item");
 
       let formattedTime = "—";
-      if (student.activeJournal && student.timeSpentInSeconds) {
-        const seconds = (student.timeSpentInSeconds % 60).toString().padStart(2, '0');
-        const minutes = Math.floor(student.timeSpentInSeconds / 60).toString().padStart(2, '0');
+      const activeJournal = student.activeJournal || {};
+      if (activeJournal.timeSpentInSeconds) {
+        const seconds = (activeJournal.timeSpentInSeconds % 60).toString().padStart(2, '0');
+        const minutes = Math.floor(activeJournal.timeSpentInSeconds / 60).toString().padStart(2, '0');
         formattedTime = `${minutes}:${seconds}`;
       }
 
@@ -323,18 +324,18 @@
         <div class="student-information width-200">
           <div class="info-wrapper">
             <div class="sudent-journal">
-              <p class="text_m_dashboard" id="student-journal-name" fs-list-field="journalName">${student.activeJournal?.name || "—"}</p>
-              <p class="text_m_dashboard opacity_60" id="student-journal-desc" fs-list-field="journalDescription">${student.activeJournal?.description || ""}</p>
+              <p class="text_m_dashboard" id="student-journal-name" fs-list-field="journalName">${activeJournal.name || "—"}</p>
+              <p class="text_m_dashboard opacity_60" id="student-journal-desc" fs-list-field="journalDescription">${activeJournal?.description || ""}</p>
             </div>
           </div>
         </div>
 
         <div class="student-information width-140 status">
           <div class="status-journal">
-            ${student.activeJournal ? '<div class="student-journal-status-dot-started" id="student-journal-status-dot"></div>' : ''}
+            ${activeJournal ? '<div class="student-journal-status-dot-started" id="student-journal-status-dot"></div>' : ''}
             <div class="sudent-status">
               <p class="text_m_dashboard" id="student-journal-status" fs-list-field="status">
-                ${student.activeJournal ? "Started" : ""}
+                ${activeJournal ? "Started" : ""}
               </p>
             </div>
           </div>
@@ -350,7 +351,7 @@
         </div>
 
         <div class="student-information width-80">
-          <a id="open-student-details" href="${student.activeJournal?.url}" class="see-student-detials w-inline-block">
+          <a id="open-student-details" href="${activeJournal.url || "#"}" class="see-student-detials w-inline-block">
             <img loading="lazy" src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" alt="arrow pointing left">
           </a>
         </div>
