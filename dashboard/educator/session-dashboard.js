@@ -4,8 +4,8 @@
   HOME_PAGE_URL = "/educators-home"
 
   document.addEventListener("DOMContentLoaded", function () {
-    const currentSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStaging";
-    const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getActiveSessionStudentsStaging?full=true";
+    const currentSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStaging";
+    const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStudentsStaging?full=true";
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
     const countStudentsInSession = document.getElementById("count-students-in-session");
@@ -332,10 +332,10 @@
 
         <div class="student-information width-140 status">
           <div class="status-journal">
-            ${activeJournal ? '<div class="student-journal-status-dot-started" id="student-journal-status-dot"></div>' : ''}
+            ${activeJournal.started_at ? '<div class="student-journal-status-dot-started" id="student-journal-status-dot"></div>' : ''}
             <div class="sudent-status">
               <p class="text_m_dashboard" id="student-journal-status" fs-list-field="status">
-                ${activeJournal ? "Started" : ""}
+                ${activeJournal.started_at ? "Started" : ""}
               </p>
             </div>
           </div>
