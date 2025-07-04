@@ -368,8 +368,8 @@
           if (sidebarEmail) sidebarEmail.textContent = student.email || "-";
           if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
           
-          if (sidebarJournalName) sidebarJournalName.textContent = student.active_journal.name || "-";
-          if (sidebarJournalDesc) sidebarJournalDesc.textContent = student.active_journal.description || "—";
+          if (sidebarJournalName) sidebarJournalName.textContent = student.activeJournal.name || "-";
+          if (sidebarJournalDesc) sidebarJournalDesc.textContent = student.activeJournal.description || "—";
           if (sidebarJournalLink) {
             sidebarJournalLink.href = student.activeJournal?.url || "#";
           }
