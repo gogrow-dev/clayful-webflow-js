@@ -303,6 +303,16 @@
         .then(res => res.json())
         .then(data => {
           const journals = data?.journals || [];
+
+          const container = sidebar.querySelector("#sidebar-journals-container");
+          if (container) {
+            container.innerHTML = "";
+
+            journals.forEach((journal) => {
+              const el = createSidebarJournalElement(journal);
+              container.appendChild(el);
+            });
+          }
           console.log("Fetched student journals:", journals);
         })
         .catch(err => {
@@ -415,17 +425,19 @@
         }
 
         // 👉 Fetch and render journal list
-        const { journals } = await fetchAndRenderSidebarStudentJournals(student.id);
+        const response = await fetchAndRenderSidebarStudentJournals(student.id);
+        // console.log(response.json());
+        // const journals = response?.journals || [];
 
-        const container = sidebar.querySelector("#sidebar-journals-container");
-        if (container) {
-          container.innerHTML = ""; // 🔄 clear previous journals
+        // const container = sidebar.querySelector("#sidebar-journals-container");
+        // if (container) {
+        //   container.innerHTML = "";
 
-          journals.forEach((journal) => {
-            const el = createSidebarJournalElement(journal);
-            container.appendChild(el);
-          });
-        }
+        //   journals.forEach((journal) => {
+        //     const el = createSidebarJournalElement(journal);
+        //     container.appendChild(el);
+        //   });
+        // }
       });
 
 
