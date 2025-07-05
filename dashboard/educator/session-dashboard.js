@@ -30,6 +30,19 @@
     const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
     const studentSidebarBg = document.getElementById("student-sidebar-bg");
 
+    const sidebarContent = document.querySelector(".sidebar-content");
+
+    const oldJournalBlock = sidebarContent.querySelector(".sidebar-student-journal");
+    if (oldJournalBlock) {
+      oldJournalBlock.remove();
+    }
+
+    const journalContainer = document.createElement("div");
+    journalContainer.id = "sidebar-journals-container";
+    journalContainer.classList.add("sidebar-journals-container");
+
+    sidebarContent.appendChild(journalContainer);
+
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
         !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
     ) return;
@@ -372,50 +385,118 @@
         </div>
       `;
 
-      row.querySelector("#open-student-details").addEventListener("click", function (e) {
+      row.querySelector("#open-student-details").addEventListener("click", async function (e) {
         e.preventDefault();
 
-        fetchAndRenderSidebarStudentJournals(student.id);
-        if (sidebar){
-          sidebar.style.display = "flex";
-          
-          const sidebarName = sidebar.querySelector("#sidebar-student-name");
-          const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
-          const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
-          
-          const sidebarJournalName = sidebar.querySelector("#sidebar-journal-name");
-          const sidebarJournalDesc = sidebar.querySelector("#sidebar-journal-desc");
-          const sidebarJournalLink = sidebar.querySelector("#sidebar-btn-view-journal");
-          const sidebarTimeSpent = sidebar.querySelector("#sidebar-student-time-spent");
-
-          if (sidebarName) sidebarName.textContent = student.studentName;
-          if (sidebarEmail) sidebarEmail.textContent = student.email || "-";
-          if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
-          
-          if (sidebarJournalName) sidebarJournalName.textContent = student.activeJournal.name || "-";
-          if (sidebarJournalDesc) sidebarJournalDesc.textContent = student.activeJournal.description || "—";
-          if (sidebarJournalLink) sidebarJournalLink.href = student.activeJournal?.url || "#";
-          if (sidebarTimeSpent) sidebarTimeSpent.textContent = formattedTime;
-
-
-          const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
-          const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");      
-
-          if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
-            if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
-            if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
-          } else {
-            if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
-            if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
-          }
-
-        } else {
+        const sidebar = document.querySelector(".sidebar-content");
+        if (!sidebar) {
           console.error("Sidebar element not found");
+          return;
+        }
+
+        sidebar.style.display = "flex";
+
+        const sidebarName = sidebar.querySelector("#sidebar-student-name");
+        const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
+        const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
+
+        if (sidebarName) sidebarName.textContent = student.studentName;
+        if (sidebarEmail) sidebarEmail.textContent = student.email || "-";
+        if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
+
+        const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
+        const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
+        if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
+          if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
+          if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
+        } else {
+          if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
+          if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
+        }
+
+        // 👉 Fetch and render journal list
+        const { journals } = await fetchAndRenderSidebarStudentJournals(student.id);
+
+        const container = sidebar.querySelector("#sidebar-journals-container");
+        if (container) {
+          container.innerHTML = ""; // 🔄 clear previous journals
+
+          journals.forEach((journal) => {
+            const el = createSidebarJournalElement(journal);
+            container.appendChild(el);
+          });
         }
       });
 
+
       return row;
     }
+
+    function createSidebarJournalElement(journal) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "sidebar-student-journal";
+
+      const formatTime = (secs) => {
+        const mins = Math.floor(secs / 60);
+        const sec = secs % 60;
+        return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+      };
+
+      const status = journal.ended_at ? "Completed" : "Started";
+      const statusClass = journal.ended_at ? "student-journal-status-dot-completed" : "student-journal-status-dot-started";
+
+      wrapper.innerHTML = `
+        <div class="sidebar-student-row">
+          <div class="sidebar-left-column"><p class="text_l_dashboard white opacity-60">Journal name</p></div>
+          <div class="sidebar-rigth-column">
+            <div class="sidebar-journal-info">
+              <p class="text_l_dashboard white">${journal.name}</p>
+              <p class="text_m_dashboard opacity_60">${journal.description}</p>
+            </div>
+            <a href="${journal.url}" target="_blank" class="button-square-outlined width150px w-inline-block">
+              <p class="text_m_dashboard width100">View journal</p>
+              <img src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" loading="lazy" alt="arrow">
+            </a>
+          </div>
+        </div>
+        <div class="sidebar-student-row">
+          <div class="sidebar-left-column"><p class="text_l_dashboard white opacity-60">Status</p></div>
+          <div class="sidebar-rigth-column">
+            <div class="status-journal">
+              <div class="student-journal-status-dot ${statusClass}"></div>
+              <div class="sudent-status">
+                <p class="text_l_dashboard white">${status}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-student-row">
+          <div class="sidebar-left-column"><p class="text_l_dashboard white opacity-60">Time spent</p></div>
+          <div class="sidebar-rigth-column">
+            <div class="sidebar-journal-info-horizontal">
+              <p class="text_l_dashboard white">${formatTime(journal.timeSpentInSeconds)}</p>
+              <p class="text_l_dashboard white">minutes</p>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-student-row">
+          <div class="sidebar-left-column"><p class="text_l_dashboard white opacity-60">Key details</p></div>
+          <div class="sidebar-rigth-column">
+            <div class="sidebar-journal-info">
+              <p id="sidebar-ai-summary" class="text_m_dashboard opacity_60 w-node-e001fc25-f8e4-2877-0294-c06e32b9fa45-df3d87f2">Anger is just a cover—let’s uncover what’s really going on beneath the surface</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      return wrapper;
+    }
+
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
 
 
     // Initial fetch
