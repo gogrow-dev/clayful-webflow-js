@@ -31,6 +31,7 @@
     const studentSidebarBg = document.getElementById("student-sidebar-bg");
 
     const sidebarContent = document.querySelector(".sidebar-content");
+    console.log("sidebarContent", sidebarContent);
 
     const oldJournalBlock = sidebarContent.querySelector(".sidebar-student-journal");
     if (oldJournalBlock) {
@@ -298,19 +299,20 @@
     }
 
     // == fetch and render sidebar student journals
-    function fetchAndRenderSidebarStudentJournals(studentUserId) {
+    async function fetchAndRenderSidebarStudentJournals(studentUserId) {
       fetch(`${studentsJournalsUrl}?studentUserId=${studentUserId}`, { headers })
         .then(res => res.json())
         .then(data => {
           const journals = data?.journals || [];
 
-          const container = sidebar.querySelector("#sidebar-journals-container");
-          if (container) {
-            container.innerHTML = "";
+          console.log("journal container", journalContainer);
+          if (journalContainer) {
+
+            journalContainer.innerHTML = "";
 
             journals.forEach((journal) => {
               const el = createSidebarJournalElement(journal);
-              container.appendChild(el);
+              journalContainer.appendChild(el);
             });
           }
           console.log("Fetched student journals:", journals);
@@ -398,13 +400,14 @@
       row.querySelector("#open-student-details").addEventListener("click", async function (e) {
         e.preventDefault();
 
-        const sidebar = document.querySelector(".sidebar-content");
+        // const sidebar = document.querySelector(".sidebar-content");
         if (!sidebar) {
           console.error("Sidebar element not found");
           return;
         }
 
         sidebar.style.display = "flex";
+        sidebarContent.style.display = "flex";
 
         const sidebarName = sidebar.querySelector("#sidebar-student-name");
         const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
