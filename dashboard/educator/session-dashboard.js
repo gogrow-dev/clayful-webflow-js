@@ -1,3 +1,5 @@
+import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/educator/jounrlas-tab.js";
+
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`educator/session-dashboard.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
@@ -10,7 +12,7 @@
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
     const countStudentsInSession = document.getElementById("count-students-in-session");
-  
+
     const waitingText = document.getElementById("text-waiting-status");
     const studentList = document.getElementById("students-list");
     const studentViewTable = document.getElementById("student-view-table");
@@ -31,7 +33,9 @@
     const studentSidebarBg = document.getElementById("student-sidebar-bg");
 
     const sidebarContent = document.querySelector(".sidebar-content");
-    console.log("sidebarContent", sidebarContent);
+
+    const tabJournals = document.getElementById("tab-journals");
+    const tabOverview = document.getElementById("tab-overview");
 
     const oldJournalBlock = sidebarContent.querySelector(".sidebar-student-journal");
     if (oldJournalBlock) {
@@ -45,7 +49,7 @@
     sidebarContent.appendChild(journalContainer);
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
-        !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
+      !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
     ) return;
 
     studentList.innerHTML = "";
@@ -120,7 +124,7 @@
           activeSessionTime.style.display = "flex";
           wrapperActiveSessionTime.style.display = "flex";
         }
-        
+
       })
       .catch(err => console.error("Failed to load session:", err));
 
@@ -189,7 +193,7 @@
                 }
 
                 startSessionTimer(totalTimeInSeconds);
-                
+
                 activeSessionTime.style.display = "flex";
                 wrapperActiveSessionTime.style.display = "flex";
               });
@@ -508,16 +512,34 @@
     }
 
 
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
+    let fetchIntervalId = null;
+
+    // If click on Journal tab, fetch only journals.
+    if (tabJournals) {
+      tabJournals.addEventListener("click", function () {
+        fetchAndRenderJournals();
+
+        if (fetchIntervalId) clearInterval(fetchIntervalId);
+        fetchIntervalId = setInterval(fetchAndRenderJournals, 15000);
+      });
+    }
+    // If click on Overview tab, fetch only students.
+    if (tabOverview) {
+      tabOverview.addEventListener("click", function () {
+        fetchAndRenderStudents();
+
+        if (fetchIntervalId) clearInterval(fetchIntervalId);
+        fetchIntervalId = setInterval(fetchAndRenderStudents, 15000);
+      });
     }
 
 
 
-    // Initial fetch
+    // Initial fetch, in overview tab.
     fetchAndRenderStudents();
 
-    // Refresh every 60 seconds
-    setInterval(fetchAndRenderStudents, 15000);
+    // Refresh every 15 seconds
+    if (fetchIntervalId) clearInterval(fetchIntervalId);
+    fetchIntervalId = setInterval(fetchAndRenderStudents, 15000);
   });
 })();
