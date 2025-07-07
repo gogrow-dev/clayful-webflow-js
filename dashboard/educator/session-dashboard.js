@@ -3,7 +3,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`educator/session-dashboard.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
-  HOME_PAGE_URL = "/educators-home";
+  const HOME_PAGE_URL = "/educators-home";
 
   document.addEventListener("DOMContentLoaded", function () {
     const currentSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStaging";
