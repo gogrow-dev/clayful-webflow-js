@@ -4,3 +4,5 @@
   Cache-Control: no-store
 /session-dashboard.js
   Cache-Control: no-store
+/journals-tab.js
+  Cache-Control: no-store
