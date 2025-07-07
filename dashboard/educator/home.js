@@ -2,7 +2,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
 
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
-  console.log(`educator/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
+  // console.log(`educator/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
   document.addEventListener("DOMContentLoaded", function () {
     const educatorStartSessionButton = document.getElementById("btn-confirm-start-session");
@@ -46,7 +46,6 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
           body: JSON.stringify({})
         });
 
-        console.log("response:", response);
         if (!response.ok) throw new Error("Server error");
 
 

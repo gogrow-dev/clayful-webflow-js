@@ -6,17 +6,17 @@
     if (!window._typeformScreenChangeHandled) {
         window._typeformScreenChangeHandled = true;
 
-        console.log("🚀 [CDN] Typeform screen changed (started)");
-        console.log("TypeformID:", window.typeformId);
-        console.log("Description:", window.description);
-        console.log("Journal Name:", window.journalName);
-        console.log("Featured Image:", window.featuredImage);
-        console.log("URL:", window.location.href);
+        // console.log("🚀 [CDN] Typeform screen changed (started)");
+        // console.log("TypeformID:", window.typeformId);
+        // console.log("Description:", window.description);
+        // console.log("Journal Name:", window.journalName);
+        // console.log("Featured Image:", window.featuredImage);
+        // console.log("URL:", window.location.href);
 
         const token = localStorage.getItem("_ms-mid");
 
         if (!token) {
-            console.error("Missing token");
+            // console.error("Missing token");
             if (studentErrorMsg) studentErrorMsg.style.display = "block";
             return;
         }
@@ -42,10 +42,10 @@
             return res.json();
           })
           .then(() => {
-            console.log("Journal started successfully");
+            // console.log("Journal started successfully");
           })
           .catch(err => {
-            console.error("Failed to start journal:", err);
+            // console.error("Failed to start journal:", err);
           });
     }
 
@@ -60,8 +60,8 @@
 
   // This will run when the Typeform is submitted
   window.handleTypeformSubmit = function () {
-    console.log("🎯 [CDN] Typeform submitted");
-    console.log("TypeformID:", window.typeformId);
+    // console.log("🎯 [CDN] Typeform submitted");
+    // console.log("TypeformID:", window.typeformId);
 
     // Example: Track with fetch
     // fetch("https://your-api.com/typeform-submitted", {

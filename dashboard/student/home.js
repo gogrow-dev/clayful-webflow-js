@@ -2,7 +2,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
 
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
-  console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
+  // console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
 
   document.addEventListener("DOMContentLoaded", function () {
