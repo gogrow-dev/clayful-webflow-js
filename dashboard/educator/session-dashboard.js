@@ -1,4 +1,4 @@
-import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/educator/jounrlas-tab.js";
+import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/educator/journals-tab.js";
 
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
