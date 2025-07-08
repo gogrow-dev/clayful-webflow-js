@@ -1,5 +1,6 @@
 (function () {
   const startJournalUrl = "https://us-central1-clayful-app.cloudfunctions.net/student-startJournalStaging";
+  const finishJournalUrl = "https://us-central1-clayful-app.cloudfunctions.net/student-finishJournalStaging";
 
   // This will run when the Typeform screen changes
   window.handleTypeformScreenChange = function () {
@@ -48,26 +49,43 @@
             // console.error("Failed to start journal:", err);
           });
     }
-
-
-    // Example: Track with fetch
-    // fetch("https://your-api.com/typeform-started", {
-    //   method: "POST",
-    //   body: JSON.stringify({ url: window.typeformId }),
-    //   headers: { "Content-Type": "application/json" }
-    // });
   };
 
   // This will run when the Typeform is submitted
   window.handleTypeformSubmit = function () {
-    // console.log("🎯 [CDN] Typeform submitted");
-    // console.log("TypeformID:", window.typeformId);
+    console.log("🚀 [CDN] Typeform submitted (finished)");
+    const token = localStorage.getItem("_ms-mid");
 
-    // Example: Track with fetch
-    // fetch("https://your-api.com/typeform-submitted", {
-    //   method: "POST",
-    //   body: JSON.stringify({ url: window.typeformId }),
-    //   headers: { "Content-Type": "application/json" }
-    // });
+    if (!token) {
+        if (studentErrorMsg) studentErrorMsg.style.display = "block";
+        return;
+    }
+
+    const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+    };
+
+    fetch(finishJournalUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ journal: {
+        typeformId: window.typeformId,
+        description: window.description,
+        name: window.journalName,
+        featuredImage: window.featuredImage,
+        url: window.location.href
+      } })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to update session status");
+        return res.json();
+      })
+      .then(() => {
+        // console.log("Journal started successfully");
+      })
+      .catch(err => {
+        // console.error("Failed to start journal:", err);
+      });
   };
 })();
