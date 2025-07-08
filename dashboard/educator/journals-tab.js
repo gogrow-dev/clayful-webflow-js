@@ -1,12 +1,16 @@
-export function fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingText) {
+export function fetchAndRenderJournals(journalsUrl, headers) {
+  const journalsList = document.getElementById("journals-list");
+  const waitingTextJournals = document.getElementById("text-waiting-journals-status");
+  const journalViewTable = document.querySelector(".journal_view_table");
+  const sidebar = document.getElementById("sidebar-journal");
+
   fetch(journalsUrl, { headers })
     .then(res => res.json())
     .then(data => {
       const journals = data?.journals || [];
 
-      console.log("Fetched journals:", journals);
       if (!journals || journals.length === 0) {
-        waitingText.style.display = "flex";
+        waitingTextJournals.style.display = "flex";
         journalViewTable.style.display = "none";
         //countStudentsInSession.textContent = "0";
         return;
@@ -20,31 +24,29 @@ export function fetchAndRenderJournals(journalsUrl, headers, journalsList, journ
         journalsList.appendChild(row);
       });
 
-      waitingText.style.display = "none";
+      waitingTextJournals.style.display = "none";
       journalViewTable.style.removeProperty("display");
       journalsList.style.removeProperty("display");
     })
     .catch(err => {
       console.error("Failed to fetch journals", err);
     });
-}
 
+  function createJournalRow(journal, id) {
 
-function createJournalRow(journal, id) {
+    const row = document.createElement("div");
+    row.className = "journal-collection-item w-dyn-item";
+    row.role = "listitem"
+    row.id = `journal-${id}`
 
-  const row = document.createElement("div");
-  row.className = "journal-collection-item w-dyn-item";
-  row.role = "listitem"
-  row.id = `journal-${id}`
+    let formattedTime = "—";
+    if (journal.avgTimeSpentInSeconds) {
+      const seconds = (journal.avgTimeSpentInSeconds % 60).toString().padStart(2, '0');
+      const minutes = Math.floor(journal.avgTimeSpentInSeconds / 60).toString().padStart(2, '0');
+      formattedTime = `${minutes}:${seconds}`;
+    }
 
-  let formattedTime = "—";
-  if (journal.avgTimeSpentInSeconds) {
-    const seconds = (journal.avgTimeSpentInSeconds % 60).toString().padStart(2, '0');
-    const minutes = Math.floor(journal.avgTimeSpentInSeconds / 60).toString().padStart(2, '0');
-    formattedTime = `${minutes}:${seconds}`;
-  }
-
-  row.innerHTML = `
+    row.innerHTML = `
   <div class="journal-collection-item">
     <div class="journal-column number table">
       <p id="journal-number" class="text_l_dashboard white">
@@ -81,6 +83,41 @@ function createJournalRow(journal, id) {
   </div>
   `;
 
-  return row;
+    row.querySelector("#open-journal-details").addEventListener("click", async function (e) {
+      e.preventDefault();
+
+      if (!sidebar) {
+        console.error("Sidebar element not found");
+        return;
+      }
+
+      sidebar.style.display = "flex";
+
+      const journalTitle = sidebar.querySelector("#sidebar-journal-title");
+      const journalDescription = sidebar.querySelector("#sidebar-journal-desc");
+      const journalImage = sidebar.querySelector("#sidebar-journal-img");
+
+      if (journalTitle) journalTitle.textContent = journal.name;
+      if (journalDescription) journalDescription.textContent = journal.description || "";
+      if (journalImage) journalImage.src = journal.featuredImage;
+
+      //const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
+      //const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
+      //if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
+      //  if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
+      //  if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
+      //} else {
+      //  if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
+      //  if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
+      //}
+      //sidebarStudentLoading.style.display = "flex";
+
+      //await fetchAndRenderSidebarStudentJournals(student.id);
+    });
+
+    return row;
+  }
 }
+
+
 
