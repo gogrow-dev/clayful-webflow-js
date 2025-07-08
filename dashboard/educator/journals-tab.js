@@ -99,7 +99,7 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
 
       if (journalTitle) journalTitle.textContent = journal.name;
       if (journalDescription) journalDescription.textContent = journal.description || "";
-      if (journalImage) journalImage.src = journal.featuredImage;
+      if (journalImage) journalImage.innerHTML = `<img src="${journal.featuredImage}" alt="Journal Image" />`;
 
       //const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
       //const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
