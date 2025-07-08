@@ -40,18 +40,8 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     const journalsList = document.getElementById("journals-list");
     const waitingTextJournals = document.getElementById("text-waiting-journals-status");
+    const sidebarStudentJournalWrapper = document.getElementById("sidebar-student-journals-wrapper")
     const journalViewTable = document.querySelector(".journal_view_table");
-
-    const oldJournalBlock = sidebarContent.querySelector(".sidebar-student-journal");
-    if (oldJournalBlock) {
-      oldJournalBlock.remove();
-    }
-
-    const journalContainer = document.createElement("div");
-    journalContainer.id = "sidebar-journals-container";
-    journalContainer.classList.add("sidebar-journals-container");
-
-    sidebarContent.appendChild(journalContainer);
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
       !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
@@ -316,14 +306,14 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         .then(data => {
           const journals = data?.journals || [];
 
-          console.log("journal container", journalContainer);
-          if (journalContainer) {
+          console.log("journal container", sidebarStudentJournalWrapper);
+          if (sidebarStudentJournalWrapper) {
 
-            journalContainer.innerHTML = "";
+            sidebarStudentJournalWrapper.innerHTML = "";
 
             journals.forEach((journal) => {
               const el = createSidebarJournalElement(journal);
-              journalContainer.appendChild(el);
+              sidebarStudentJournalWrapper.appendChild(el);
             });
           }
           console.log("Fetched student journals:", journals);
@@ -347,6 +337,14 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         const minutes = Math.floor(activeJournal.timeSpentInSeconds / 60).toString().padStart(2, '0');
         formattedTime = `${minutes}:${seconds}`;
       }
+
+      const journalLink = activeJournal
+        ? `
+          <a id="open-student-details" href="${activeJournal.url || "#"}" class="see-student-detials w-inline-block">
+            <img loading="lazy" src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" alt="arrow pointing left">
+          </a>
+        `
+        : '';
 
       row.innerHTML = `
         <div class="student-information width-200">
@@ -402,16 +400,13 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         </div>
 
         <div class="student-information width-80">
-          <a id="open-student-details" href="${activeJournal.url || "#"}" class="see-student-detials w-inline-block">
-            <img loading="lazy" src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" alt="arrow pointing left">
-          </a>
+          ${journalLink}
         </div>
       `;
 
       row.querySelector("#open-student-details").addEventListener("click", async function (e) {
         e.preventDefault();
 
-        // const sidebar = document.querySelector(".sidebar-content");
         if (!sidebar) {
           console.error("Sidebar element not found");
           return;
