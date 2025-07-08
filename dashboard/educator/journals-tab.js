@@ -17,8 +17,8 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
       //countStudentsInSession.textContent = students.length;
       journalsList.innerHTML = "";
 
-      journals.forEach(journal => {
-        const row = createJournalRow(journal);
+      journals.forEach((journal, idx) => {
+        const row = createJournalRow(journal, idx + 1);
         journalsList.appendChild(row);
       });
 
@@ -56,18 +56,18 @@ function createJournalRow(journal, id) {
       <img id="journal-thumbnail" loading="lazy" alt="" src="${journal.featuredImage}" class="journal-collection-image">
       <div class="journal-name-description width100">
         <p id="journal-title" fs-list-field="journalName" class="text_l_dashboard white">
-          Educator Reset - Ending Survey</p>
+          ${journal.name}</p>
         <p id="journal-desc" class="text_l_dashboard white opacity-60">
           ${journal.description}</p>
       </div>
     </div>
     <div class="journal-column table started">
       <p id="journal-started-count" class="text_l_dashboard white">
-        ${journal.total_started}</p>
+        ${journal.totalStarted}</p>
     </div>
     <div class="journal-column table completed">
       <p id="journal-completed-count" class="text_l_dashboard white">
-        ${journal.total_completed}</p>
+        ${journal.totalCompleted}</p>
     </div>
     <div class="journal-column avg-time-spent table gap4">
       <p id="journal-avg-time" class="text_l_dashboard white">
