@@ -515,17 +515,18 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     let fetchIntervalId = null;
 
-    // If click on Journal tab, fetch only journals.
     if (tabJournals) {
+      // If click on Journal tab, fetch only journals.
       tabJournals.addEventListener("click", function () {
         fetchAndRenderJournals(journalsUrl, headers);
 
         if (fetchIntervalId) clearInterval(fetchIntervalId);
-        fetchIntervalId = setInterval(fetchAndRenderJournals(journalsUrl, headers), 15000);
+        fetchIntervalId = setInterval(() => fetchAndRenderJournals(journalsUrl, headers), 15000);
       });
     }
-    // If click on Overview tab, fetch only students.
+
     if (tabOverview) {
+      // If click on Overview tab, fetch only students.
       tabOverview.addEventListener("click", function () {
         fetchAndRenderStudents();
 
