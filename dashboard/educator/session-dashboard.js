@@ -333,7 +333,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
       row.id = "student-row";
       row.setAttribute("fs-list-element", "item");
 
-      let formattedTime = "—";
+      let formattedTime = "";
       const activeJournal = student.activeJournal || {};
       if (activeJournal.timeSpentInSeconds) {
         const seconds = (activeJournal.timeSpentInSeconds % 60).toString().padStart(2, '0');
@@ -376,7 +376,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         <div class="student-information width-200">
           <div class="info-wrapper">
             <div class="sudent-journal">
-              <p class="text_m_dashboard" id="student-journal-name" fs-list-field="journalName">${activeJournal.name || "—"}</p>
+              <p class="text_m_dashboard" id="student-journal-name" fs-list-field="journalName">${activeJournal.name || ""}</p>
               <p class="text_m_dashboard opacity_60" id="student-journal-desc" fs-list-field="journalDescription">${activeJournal?.description || ""}</p>
             </div>
           </div>
@@ -407,52 +407,42 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         </div>
       `;
 
-      row.querySelector("#open-student-details").addEventListener("click", async function (e) {
-        e.preventDefault();
+      if (student.activeJournal) {
 
-        if (!sidebar) {
-          console.error("Sidebar element not found");
-          return;
-        }
 
-        sidebar.style.display = "flex";
-        sidebarContent.style.display = "flex";
+        row.querySelector("#open-student-details").addEventListener("click", async function (e) {
+          e.preventDefault();
 
-        const sidebarName = sidebar.querySelector("#sidebar-student-name");
-        const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
-        const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
+          if (!sidebar) {
+            console.error("Sidebar element not found");
+            return;
+          }
 
-        if (sidebarName) sidebarName.textContent = student.studentName;
-        if (sidebarEmail) sidebarEmail.textContent = student.email || "-";
-        if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
+          sidebar.style.display = "flex";
+          sidebarContent.style.display = "flex";
 
-        const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
-        const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
-        if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
-          if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
-          if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
-        } else {
-          if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
-          if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
-        }
-        sidebarStudentLoading.style.display = "flex";
+          const sidebarName = sidebar.querySelector("#sidebar-student-name");
+          const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
+          const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
 
-        // 👉 Fetch and render journal list
-        await fetchAndRenderSidebarStudentJournals(student.id);
-        // console.log(response.json());
-        // const journals = response?.journals || [];
+          if (sidebarName) sidebarName.textContent = student.studentName;
+          if (sidebarEmail) sidebarEmail.textContent = student.email || "";
+          if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
 
-        // const container = sidebar.querySelector("#sidebar-journals-container");
-        // if (container) {
-        //   container.innerHTML = "";
+          const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
+          const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
+          if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
+            if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
+            if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
+          } else {
+            if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
+            if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
+          }
+          sidebarStudentLoading.style.display = "flex";
 
-        //   journals.forEach((journal) => {
-        //     const el = createSidebarJournalElement(journal);
-        //     container.appendChild(el);
-        //   });
-        // }
-      });
-
+          await fetchAndRenderSidebarStudentJournals(student.id);
+        });
+      }
 
       return row;
     }
