@@ -341,7 +341,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         formattedTime = `${minutes}:${seconds}`;
       }
 
-      const journalLink = activeJournal
+      const journalLink = student.activeJournal
         ? `
           <a id="open-student-details" href="${activeJournal.url || "#"}" class="see-student-detials w-inline-block">
             <img loading="lazy" src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" alt="arrow pointing left">
