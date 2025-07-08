@@ -538,9 +538,9 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
       });
     }
 
+    console.log(tabJournals);
     // Initial fetch
     if (tabJournals.getAttribute("aria-selected") === "true") {
-      console.log("Entro");
       setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
     } else if (tabOverview.getAttribute("aria-selected") === "true") {
       setFetchInterval(fetchAndRenderStudents);
