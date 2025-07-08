@@ -465,9 +465,8 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
       };
 
-      const statusStarted = journal.status === "started";
-      const status = statusStarted ? "Started" : "Completed";
-      const statusClass = statusStarted ? "student-journal-status-dot-started" : "student-journal-status-dot-completed";
+      const status = journal.ended_at ? "Completed" : "Started";
+      const statusClass = journal.ended_at ? "student-journal-status-dot-completed" : "student-journal-status-dot-started";
 
       wrapper.innerHTML = `
         <div class="sidebar-student-row">
