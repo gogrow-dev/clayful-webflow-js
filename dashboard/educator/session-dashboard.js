@@ -38,6 +38,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const tabJournals = document.getElementById("tab-journals");
     const tabOverview = document.getElementById("tab-overview");
 
+    const journalsList = document.getElementById("journals-list");
+    const waitingTextJournals = document.getElementById("text-waiting-journals-status");
+    const journalViewTable = document.querySelector(".journal_view_table");
+
     const oldJournalBlock = sidebarContent.querySelector(".sidebar-student-journal");
     if (oldJournalBlock) {
       oldJournalBlock.remove();
@@ -55,6 +59,8 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     studentList.innerHTML = "";
     studentViewTable.style.display = "none";
+    journalsList.innerHTML = "";
+    journalViewTable.style.display = "none";
     wrapperActiveSessionTime.style.display = "none";
     wrapperPausedSessionTime.style.display = "none";
 
@@ -522,7 +528,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     if (tabJournals) {
       tabJournals.addEventListener("click", function () {
-        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers));
+        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
       });
     }
 
@@ -534,7 +540,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     // Initial fetch
     if (tabJournals.getAttribute("aria-selected") === "true") {
-      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers));
+      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
     } else if (tabOverview.getAttribute("aria-selected") === "true") {
       setFetchInterval(fetchAndRenderStudents);
     }

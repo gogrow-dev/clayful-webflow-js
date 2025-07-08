@@ -1,8 +1,4 @@
-export function fetchAndRenderJournals(journalsUrl, headers) {
-  const journalsList = document.getElementById("journals-list");
-  const waitingText = document.getElementById("text-waiting-journals-status");
-  const journalViewTable = document.querySelector(".journal_view_table");
-
+export function fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingText) {
   fetch(journalsUrl, { headers })
     .then(res => res.json())
     .then(data => {
