@@ -34,14 +34,16 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const studentSidebarBg = document.getElementById("student-sidebar-bg");
 
     const sidebarContent = document.querySelector(".sidebar-content");
+    const sidebarStudentJournalWrapper = document.getElementById("sidebar-student-journals-wrapper")
+    const sidebarStudentLoading = document.getElementById("sidebar-student-loading");
 
     const tabJournals = document.getElementById("tab-journals");
     const tabOverview = document.getElementById("tab-overview");
 
     const journalsList = document.getElementById("journals-list");
     const waitingTextJournals = document.getElementById("text-waiting-journals-status");
-    const sidebarStudentJournalWrapper = document.getElementById("sidebar-student-journals-wrapper")
     const journalViewTable = document.querySelector(".journal_view_table");
+    
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
       !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
@@ -301,15 +303,16 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     // == fetch and render sidebar student journals
     async function fetchAndRenderSidebarStudentJournals(studentUserId) {
+      sidebarStudentJournalWrapper.innerHTML = "";
+
       fetch(`${studentsJournalsUrl}?studentUserId=${studentUserId}`, { headers })
         .then(res => res.json())
         .then(data => {
           const journals = data?.journals || [];
 
+          sidebarStudentLoading.style.display = "none";
           console.log("journal container", sidebarStudentJournalWrapper);
           if (sidebarStudentJournalWrapper) {
-
-            sidebarStudentJournalWrapper.innerHTML = "";
 
             journals.forEach((journal) => {
               const el = createSidebarJournalElement(journal);
@@ -432,9 +435,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
           if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
           if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
         }
+        sidebarStudentLoading.style.display = "flex";
 
         // 👉 Fetch and render journal list
-        const response = await fetchAndRenderSidebarStudentJournals(student.id);
+        await fetchAndRenderSidebarStudentJournals(student.id);
         // console.log(response.json());
         // const journals = response?.journals || [];
 
