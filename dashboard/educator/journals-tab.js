@@ -83,7 +83,7 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
   </div>
   `;
 
-    row.querySelector("#open-journal-details").addEventListener("click", async function (e) {
+    row.querySelector("#journal-open-details").addEventListener("click", async function (e) {
       e.preventDefault();
 
       if (!sidebar) {
@@ -113,6 +113,7 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
       //sidebarStudentLoading.style.display = "flex";
 
       //await fetchAndRenderSidebarStudentJournals(student.id);
+      return;
     });
 
     return row;
