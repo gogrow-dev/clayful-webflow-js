@@ -533,6 +533,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     }
 
     // Initial fetch
+    console.log("ARIA", tabJournals.ariaSelected);
     if (tabJournals.ariaSelected === true) {
       setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers));
     } else if (tabOverview.ariaSelected === true) {
