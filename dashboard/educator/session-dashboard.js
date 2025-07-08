@@ -538,13 +538,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
       });
     }
 
-    console.log(tabJournals);
-    console.log(tabJournals.getAttribute("aria-selected"));
-    console.log(tabJournals.outerHTML);
     // Initial fetch
-    if (tabJournals.getAttribute("aria-selected") === "true") {
+    if (tabJournals.classList.contains("w--current")) {
       setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
-    } else if (tabOverview.getAttribute("aria-selected") === "true") {
+    } else if (tabOverview.classList.contains("w--current")) {
       setFetchInterval(fetchAndRenderStudents);
     }
   });
