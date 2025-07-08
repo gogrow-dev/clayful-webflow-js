@@ -348,6 +348,14 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
           </a>
         `
         : '';
+      const journalStatusStarted = activeJournal.status === "started";
+      const journalStatus = activeJournal.status
+        ? journalStatusStarted ? "Started" : "Completed"
+        : "";
+
+      const journalStatusClass = activeJournal.status
+        ? `student-journal-status-dot-${journalStatusStarted ? "started" : "completed"}`
+        : "";
 
       row.innerHTML = `
         <div class="student-information width-200">
@@ -384,10 +392,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
         <div class="student-information width-140 status">
           <div class="status-journal">
-            ${activeJournal.started_at ? '<div class="student-journal-status-dot-started" id="student-journal-status-dot"></div>' : ''}
+            <div class="${journalStatusClass}"></div>
             <div class="sudent-status">
               <p class="text_m_dashboard" id="student-journal-status" fs-list-field="status">
-                ${activeJournal.started_at ? "Started" : ""}
+                ${journalStatus}
               </p>
             </div>
           </div>
@@ -457,8 +465,9 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
         return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
       };
 
-      const status = journal.ended_at ? "Completed" : "Started";
-      const statusClass = journal.ended_at ? "student-journal-status-dot-completed" : "student-journal-status-dot-started";
+      const statusStarted = journal.status === "started";
+      const status = statusStarted ? "Started" : "Completed";
+      const statusClass = statusStarted ? "student-journal-status-dot-started" : "student-journal-status-dot-completed";
 
       wrapper.innerHTML = `
         <div class="sidebar-student-row">
