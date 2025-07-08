@@ -518,31 +518,31 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
       return wrapper;
     }
 
-    let fetchIntervalId = null;
+    //let fetchIntervalId = null;
 
-    function setFetchInterval(fetchFn, interval = 15000) {
-      fetchFn();
-      if (fetchIntervalId) clearInterval(fetchIntervalId);
-      fetchIntervalId = setInterval(fetchFn, interval);
-    }
+    //function setFetchInterval(fetchFn, interval = 15000) {
+    //  fetchFn();
+    //  if (fetchIntervalId) clearInterval(fetchIntervalId);
+    //  fetchIntervalId = setInterval(fetchFn, interval);
+    //}
 
-    if (tabJournals) {
-      tabJournals.addEventListener("click", function () {
-        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
-      });
-    }
+    //if (tabJournals) {
+    //  tabJournals.addEventListener("click", function () {
+    //    setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
+    //  });
+    //}
 
-    if (tabOverview) {
-      tabOverview.addEventListener("click", function () {
-        setFetchInterval(fetchAndRenderStudents);
-      });
-    }
+    //if (tabOverview) {
+    //  tabOverview.addEventListener("click", function () {
+    //    setFetchInterval(fetchAndRenderStudents);
+    //  });
+    //}
 
-    // Initial fetch
-    if (tabJournals.getAttribute("aria-selected") === "true") {
-      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
-    } else if (tabOverview.getAttribute("aria-selected") === "true") {
-      setFetchInterval(fetchAndRenderStudents);
-    }
+    //// Initial fetch
+    //if (tabJournals.getAttribute("aria-selected") === "true") {
+    //  setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, journalsList, journalViewTable, waitingTextJournals));
+    //} else if (tabOverview.getAttribute("aria-selected") === "true") {
+    //  setFetchInterval(fetchAndRenderStudents);
+    //}
   });
 })();
