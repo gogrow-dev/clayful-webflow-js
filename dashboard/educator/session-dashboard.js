@@ -40,6 +40,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const tabJournals = document.getElementById("tab-journals");
     const tabOverview = document.getElementById("tab-overview");
 
+    const journalSidebar = document.getElementById("sidebar-journal");
+    const journalSidebarBg = document.getElementById("sidebar-journal-bg");
+    const journalSidebarCloseBtn = document.getElementById("sidebar-journal-close-btn");
+
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
       !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
     ) return;
@@ -227,12 +231,28 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
       });
     }
 
+    if (journalSidebarBg) {
+      journalSidebarBg.addEventListener("click", function () {
+        if (journalSidebar) {
+          journalSidebar.style.display = "none";
+        }
+      });
+    }
+
     // === Handle sidebar close on x button ===
     if (sidebarCloseBtn) {
       sidebarCloseBtn.addEventListener("click", function () {
         const sidebar = document.getElementById("sidebar-student");
         if (sidebar) {
           sidebar.style.display = "none";
+        }
+      });
+    }
+
+    if (journalSidebarCloseBtn) {
+      journalSidebarCloseBtn.addEventListener("click", function () {
+        if (journalSidebar) {
+          journalSidebar.style.display = "none";
         }
       });
     }
