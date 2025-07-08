@@ -512,36 +512,31 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
       return wrapper;
     }
 
-
     let fetchIntervalId = null;
 
-    if (tabJournals) {
-      // If click on Journal tab, fetch only journals.
-      tabJournals.addEventListener("click", function () {
-        fetchAndRenderJournals(journalsUrl, headers);
+    function setFetchInterval(fetchFn, interval = 15000) {
+      fetchFn();
+      if (fetchIntervalId) clearInterval(fetchIntervalId);
+      fetchIntervalId = setInterval(fetchFn, interval);
+    }
 
-        if (fetchIntervalId) clearInterval(fetchIntervalId);
-        fetchIntervalId = setInterval(() => fetchAndRenderJournals(journalsUrl, headers), 15000);
+    if (tabJournals) {
+      tabJournals.addEventListener("click", function () {
+        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers));
       });
     }
 
     if (tabOverview) {
-      // If click on Overview tab, fetch only students.
       tabOverview.addEventListener("click", function () {
-        fetchAndRenderStudents();
-
-        if (fetchIntervalId) clearInterval(fetchIntervalId);
-        fetchIntervalId = setInterval(fetchAndRenderStudents, 15000);
+        setFetchInterval(fetchAndRenderStudents);
       });
     }
 
-
-
-    // Initial fetch, in overview tab.
-    fetchAndRenderStudents();
-
-    // Refresh every 15 seconds
-    if (fetchIntervalId) clearInterval(fetchIntervalId);
-    fetchIntervalId = setInterval(fetchAndRenderStudents, 15000);
+    // Initial fetch
+    if (tabJournals.ariaSelected === true) {
+      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers));
+    } else if (tabOverview.ariaSelected === true) {
+      setFetchInterval(fetchAndRenderStudents);
+    }
   });
 })();

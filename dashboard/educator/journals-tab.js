@@ -1,5 +1,7 @@
 export function fetchAndRenderJournals(journalsUrl, headers) {
   const journalsList = document.getElementById("journals-list");
+  const waitingText = document.getElementById("text-waiting-journals-status");
+  const journalViewTable = document.querySelector(".journal_view_table");
 
   fetch(journalsUrl, { headers })
     .then(res => res.json())
@@ -8,8 +10,8 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
 
       console.log("Fetched journals:", journals);
       if (!journals || journals.length === 0) {
-        //waitingText.style.display = "flex";
-        //studentViewTable.style.display = "none";
+        waitingText.style.display = "flex";
+        journalViewTable.style.display = "none";
         //countStudentsInSession.textContent = "0";
         return;
       }
@@ -22,9 +24,9 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
         journalsList.appendChild(row);
       });
 
-      //waitingText.style.display = "none";
-      //studentViewTable.style.removeProperty("display");
-      //studentList.style.removeProperty("display");
+      waitingText.style.display = "none";
+      journalViewTable.style.removeProperty("display");
+      journalsList.style.removeProperty("display");
     })
     .catch(err => {
       console.error("Failed to fetch journals", err);
