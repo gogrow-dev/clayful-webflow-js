@@ -118,6 +118,8 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
 
     return row;
   }
+
+  return;
 }
 
 
