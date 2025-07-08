@@ -10,6 +10,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStudentsStaging?full=true";
     const studentsJournalsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStudentJournalsStaging";
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
+    const journalsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalsStaging";
 
     const countStudentsInSession = document.getElementById("count-students-in-session");
 
@@ -517,10 +518,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     // If click on Journal tab, fetch only journals.
     if (tabJournals) {
       tabJournals.addEventListener("click", function () {
-        fetchAndRenderJournals();
+        fetchAndRenderJournals(journalsUrl, headers);
 
         if (fetchIntervalId) clearInterval(fetchIntervalId);
-        fetchIntervalId = setInterval(fetchAndRenderJournals, 15000);
+        fetchIntervalId = setInterval(fetchAndRenderJournals(journalsUrl, headers), 15000);
       });
     }
     // If click on Overview tab, fetch only students.
