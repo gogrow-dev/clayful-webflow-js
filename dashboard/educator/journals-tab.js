@@ -1,10 +1,9 @@
-export function fetchAndRenderJournals(journalsUrl, headers) {
+export function fetchAndRenderJournals(journalsUrl, sessionId, headers) {
   const journalsList = document.getElementById("journals-list");
   const waitingTextJournals = document.getElementById("text-waiting-journals-status");
   const journalViewTable = document.querySelector(".journal_view_table");
 
-
-  fetch(journalsUrl, { headers })
+  fetch(`${journalsUrl}?sessionId=${sessionId}`, { headers })
     .then(res => res.json())
     .then(data => {
       const journals = data?.journals || [];
@@ -20,7 +19,7 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
       journalsList.innerHTML = "";
 
       journals.forEach((journal, idx) => {
-        const row = createJournalRow(journal, idx + 1);
+        const row = createJournalRow(journal, sessionId, headers, idx + 1);
         journalsList.appendChild(row);
       });
 
@@ -36,13 +35,10 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
 }
 
 
-function createJournalRow(journal, id) {
+function createJournalRow(journal, sessionId, headers, id) {
   const sidebar = document.getElementById("sidebar-journal");
   const sidebarLoading = document.getElementById("sidebar-journal-loading")
   const sidebarStudentsTable = document.getElementById("sidebar-journal-students-table")
-
-  const params = new URLSearchParams(window.location.search);
-  let sessionId = params.get("sessionId") || "";
 
   const row = document.createElement("div");
   row.className = "journal-collection-item w-dyn-item";
@@ -113,14 +109,14 @@ function createJournalRow(journal, id) {
     sidebarLoading.style.display = "flex";
     sidebarStudentsTable.style.display = "none";
 
-    await fetchAndRenderSidebarJournalStudents(journal.id, sessionId);
+    await fetchAndRenderSidebarJournalStudents(journal.id, sessionId, headers);
     return;
   });
 
   return row;
 }
 
-async function fetchAndRenderSidebarJournalStudents(journalId, sessionId) {
+async function fetchAndRenderSidebarJournalStudents(journalId, sessionId, headers) {
   const journalStudentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalStudentsStaging";
   const sidebarStudentsTable = document.getElementById("sidebar-journal-students-table")
   const sidebarStudentsList = document.getElementById("sidebar-journal-student-list")

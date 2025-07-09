@@ -572,7 +572,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     if (tabJournals) {
       tabJournals.addEventListener("click", function () {
-        setFetchInterval(() => fetchAndRenderJournals(`${journalsUrl}?sessionId=${sessionId}`, headers));
+        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, sessionId, headers));
       });
     }
 
@@ -584,7 +584,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     // Initial fetch
     if (tabJournals.classList.contains("w--current")) {
-      setFetchInterval(() => fetchAndRenderJournals(`${journalsUrl}?sessionId=${sessionId}`, headers));
+      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, sessionId, headers));
     } else if (tabOverview.classList.contains("w--current")) {
       setFetchInterval(fetchAndRenderStudents);
     }
