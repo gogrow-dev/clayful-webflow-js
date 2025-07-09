@@ -4,6 +4,7 @@ export function fetchAndRenderStudents(sessionId, headers) {
   const studentList = document.getElementById("students-list");
   const studentViewTable = document.getElementById("student-view-table");
   const countStudentsInSession = document.getElementById("count-students-in-session");
+  const waitingText = document.getElementById("text-waiting-status");
 
   fetch(`${studentsUrl}&sessionId=${sessionId}`, { headers })
     .then(res => res.json())
