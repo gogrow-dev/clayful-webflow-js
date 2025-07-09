@@ -399,7 +399,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
           </div>
         </div>
 
-        <div class="student-information width-140">
+        <div class="student-information align-center width-140">
           <div class="info-wrapper" id="student-consent">
             <div class="sudent-consent-status">
               <p class="text_xl_dashboard">${student.consentStatus?.trim().charAt(0) || "❌"}</p>
