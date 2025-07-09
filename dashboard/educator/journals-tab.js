@@ -1,8 +1,16 @@
 export function fetchAndRenderJournals(journalsUrl, headers) {
+  const journalStudentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalStudentsStaging";
+
   const journalsList = document.getElementById("journals-list");
   const waitingTextJournals = document.getElementById("text-waiting-journals-status");
   const journalViewTable = document.querySelector(".journal_view_table");
   const sidebar = document.getElementById("sidebar-journal");
+  const sidebarLoading = document.getElementById("sidebar-journal-loading")
+  const sidebarStudentsTable = document.getElementById("sidebar-journal-students-table")
+  const sidebarStudentsList = document.getElementById("sidebar-journal-student-list")
+
+  const params = new URLSearchParams(window.location.search);
+  let sessionId = params.get("sessionId") || "";
 
   fetch(journalsUrl, { headers })
     .then(res => res.json())
@@ -100,23 +108,131 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
       if (journalTitle) journalTitle.textContent = journal.name;
       if (journalDescription) journalDescription.textContent = journal.description || "";
       if (journalImage) journalImage.innerHTML = `<img src="${journal.featuredImage}" alt="Journal Image" />`;
+      sidebarLoading.style.display = "flex";
+      sidebarStudentsTable.style.display = "none";
 
-      //const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
-      //const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
-      //if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
-      //  if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
-      //  if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
-      //} else {
-      //  if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
-      //  if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
-      //}
-      //sidebarStudentLoading.style.display = "flex";
-
-      //await fetchAndRenderSidebarStudentJournals(student.id);
+      await fetchAndRenderSidebarJournalStudents(journal.id);
       return;
     });
 
     return row;
+  }
+
+  async function fetchAndRenderSidebarJournalStudents(journalId) {
+    sidebarStudentsList.innerHTML = "";
+    sidebarStudentsList.role = "list"
+
+    fetch(`${journalStudentsUrl}?journalId=${journalId}&sessionId=${sessionId}`, { headers })
+      .then(res => res.json())
+      .then(data => {
+        const students = data?.students || [];
+
+        sidebarLoading.style.display = "none";
+        if (sidebarStudentsList) {
+          students.forEach((student, idx) => {
+            const row = createSidebarStudentElement(student, idx + 1);
+            sidebarStudentsList.appendChild(row);
+          });
+        }
+        console.log("Fetched journal students:", students);
+      })
+      .catch(err => {
+        console.error("Failed to fetch journal students", err);
+      });
+  }
+
+  function createSidebarStudentElement(student, id) {
+    const row = document.createElement("div");
+    row.id = `sidebar-journal-student-row-${id}`;
+    row.role = "listitem"
+    row.className = "students-item";
+
+    let formattedTime = "—";
+    if (student.timeSpentInSeconds) {
+      const seconds = (student.timeSpentInSeconds % 60).toString().padStart(2, '0');
+      const minutes = Math.floor(student.timeSpentInSeconds / 60).toString().padStart(2, '0');
+      formattedTime = `${minutes}:${seconds}`;
+    }
+
+    row.innerHTML = `
+      <div id="sidebar-journal-student-row" fs-list-element="item" class="students-item">
+        <div class="student-information width-200">
+          <div class="info-wrapper">
+            <div class="div-profile-pic">
+              <div id="student-status-dot" class="student-status-dot">
+              </div>
+              <div class="student-profile-picture">
+                <img id="sidebar-journal-student-emoji" loading="lazy" alt="" src="${student.emoji}" class="student-emoji">
+              </div>
+            </div>
+            <div class="student-name-id">
+              <p id="sidebar-journal-student-name" fs-list-field="studentName" class="text_m_dashboard">
+                ${student.name}</p>
+              <p id="sidebar-journal-student-email" fs-list-field="studentName" class="text_m_dashboard opacity_60">
+                ${student.id}</p>
+            </div>
+          </div>
+        </div>
+        <div class="student-information width-140 status">
+          ${renderStudentStatus(student.status)}
+        </div>
+        <div class="student-information width-140">
+          <div class="info-wrapper">
+            <div class="sudent-time">
+              <p id="sidebar-journal-student-time-spent" fs-list-field="studentName" class="text_m_dashboard">
+                ${formattedTime}</p>
+              <p fs-list-field="studentName" class="text_m_dashboard">
+                minutes</p>
+            </div>
+          </div>
+        </div>
+        <div class="student-information width-80">
+          <a id="sidebar-journal-open-student-details" href="#" class="see-student-detials w-inline-block">
+            <img loading="lazy" src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" alt="arrow pointing left">
+          </a>
+        </div>
+      </div>
+    `;
+
+    return row;
+  }
+
+  function renderStudentStatus(status) {
+    if (status === "started") {
+      return `
+      <div id="sidebar-journal-status-started" class="status-journal">
+        <div id="student-journal-status-dot" class="student-journal-status-dot-started">
+        </div>
+        <div class="sudent-status">
+          <p id="student-journal-status" fs-list-field="a" class="text_m_dashboard">
+            Started</p>
+        </div>
+      </div>
+      `
+    } else if (status === "completed") {
+      return `
+      <div id="sidebar-journal-status-completed" class="status-journal">
+        <div id="student-journal-status-dot" class="student-journal-status-dot-completed">
+        </div>
+        <div class="sudent-status">
+          <p id="student-journal-status" fs-list-field="completed" class="text_m_dashboard">
+            Completed</p>
+        </div>
+      </div>
+      `
+    } else if (status === "chatting") {
+      return `
+      <div id="sidebar-journal-status-chatting" class="status-journal">
+        <div id="student-journal-status-dot" class="student-journal-status-dot-chatting">
+        </div>
+        <div class="sudent-status">
+          <p id="student-journal-status" fs-list-field="chatting" class="text_m_dashboard">
+            Chatting with Coach</p>
+        </div>
+      </div>
+      `
+    }
+    return "";
   }
 
   return;
