@@ -46,6 +46,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const journalSidebar = document.getElementById("sidebar-journal");
     const journalSidebarBg = document.getElementById("sidebar-journal-bg");
     const journalSidebarCloseBtn = document.getElementById("sidebar-journal-close-btn");
+    const journalViewTable = document.querySelector(".journal_view_table");
 
     if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime || !modalLoading ||
       !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
@@ -55,6 +56,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     studentViewTable.style.display = "none";
     wrapperActiveSessionTime.style.display = "none";
     wrapperPausedSessionTime.style.display = "none";
+    journalViewTable.style.display = "none";
 
     const token = localStorage.getItem("_ms-mid");
     if (!token) return;

@@ -121,13 +121,13 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
   async function fetchAndRenderSidebarJournalStudents(journalId) {
     sidebarStudentsList.innerHTML = "";
     sidebarStudentsList.role = "list"
-    sidebarStudentsTable.style.display = "block";
 
     fetch(`${journalStudentsUrl}?journalId=${journalId}&sessionId=${sessionId}`, { headers })
       .then(res => res.json())
       .then(data => {
         const students = data?.students || [];
 
+        sidebarStudentsTable.style.display = "block";
         sidebarLoading.style.display = "none";
         if (sidebarStudentsList) {
           students.forEach((student, idx) => {
