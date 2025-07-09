@@ -6,6 +6,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
 
 
   document.addEventListener("DOMContentLoaded", function () {
+    const modalLoading = document.getElementById("modal-loading");
     const studentConfirmJoinSessionButton = document.getElementById("btn-confirm-join-session");
     const studentErrorMsg = document.getElementById("msg-error-join-session");
     const studentContinueJoinSessionButton = document.getElementById("btn-continue-join-session");
@@ -41,6 +42,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       studentJoinSessionButton.addEventListener("click", () => {
         if (studentErrorMsg) studentErrorMsg.style.display = "none";
         if (continueErrorMsg) continueErrorMsg.style.display = "none";
+        if (modalLoading) modalLoading.style.display = "flex";
       });
     }
 
@@ -78,10 +80,11 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
 
         if (!response.ok) {
           console.error("Failed to join session");
+          if (modalLoading) modalLoading.style.display = "none";
           if (studentErrorMsg) studentErrorMsg.style.display = "block";
           return;
         }
-
+        if (modalLoading) modalLoading.style.display = "none";
         console.log("Successfully joined session");
         window.location.href = "/kids/journals";
         isProcessingJoinSession = false;

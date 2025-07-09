@@ -5,9 +5,9 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   // console.log(`educator/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
   document.addEventListener("DOMContentLoaded", function () {
+    const modalLoading = document.getElementById("modal-loading");
     const educatorStartSessionButton = document.getElementById("btn-confirm-start-session");
     const errorMsg = document.getElementById("msg-error-start-session");
-
 
     const token = localStorage.getItem("_ms-mid");
 
@@ -36,6 +36,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       if (isProcessingStartSession) return;
       isProcessingStartSession = true;
 
+      if (modalLoading) modalLoading.style.display = "flex";
       try {
         if (!token) throw new Error("Missing token");
         const createSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-createSessionStaging";
@@ -45,13 +46,14 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
           headers: headers,
           body: JSON.stringify({})
         });
-
+        if (modalLoading) modalLoading.style.display = "none";
         if (!response.ok) throw new Error("Server error");
 
 
         window.location.href = "/dashboard/launch-session";
         isProcessingStartSession = false;
       } catch (err) {
+        if (modalLoading) modalLoading.style.display = "none";
         console.error("Failed to start session:", err);
         if (errorMsg) errorMsg.style.display = "block";
         educatorStartSessionButton.disabled = false;

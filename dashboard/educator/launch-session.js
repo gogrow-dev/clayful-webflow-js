@@ -10,6 +10,7 @@
     const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStudentsStaging";
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
 
+    const modalLoading = document.getElementById("modal-loading");
     const studentList = document.getElementById("student-list");
     if (!studentList) return;
 
@@ -112,6 +113,8 @@
     const launchBtn = document.getElementById("btn-launch-dashboard");
     if (launchBtn) {
       launchBtn.addEventListener("click", function () {
+        if (modalLoading) modalLoading.style.display = "flex";
+
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -122,9 +125,11 @@
             return res.json();
           })
           .then(() => {
+            if (modalLoading) modalLoading.style.display = "none";
             window.location.href = DASHBOARD_URL;
           })
           .catch(err => {
+            if (modalLoading) modalLoading.style.display = "none";
             console.error("Failed to launch dashboard:", err);
             alert("There was a problem launching the session. Please try again.");
           });
