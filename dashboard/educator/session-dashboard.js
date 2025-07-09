@@ -244,7 +244,6 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
             return res.json();
           })
           .then(() => {
-            modalLoading.style.display = "none";
             // Redirect to home page after finishing session
             window.location.href = `${window.location.href}?sessionId=${sessionId}`;
           })

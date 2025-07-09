@@ -84,7 +84,6 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
           if (studentErrorMsg) studentErrorMsg.style.display = "block";
           return;
         }
-        if (modalLoading) modalLoading.style.display = "none";
         console.log("Successfully joined session");
         window.location.href = "/kids/journals";
         isProcessingJoinSession = false;
