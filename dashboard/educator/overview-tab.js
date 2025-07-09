@@ -3,6 +3,7 @@ export function fetchAndRenderStudents(sessionId, headers) {
   const studentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStudentsStaging?full=true";
   const studentList = document.getElementById("students-list");
   const studentViewTable = document.getElementById("student-view-table");
+  const countStudentsInSession = document.getElementById("count-students-in-session");
 
   fetch(`${studentsUrl}&sessionId=${sessionId}`, { headers })
     .then(res => res.json())

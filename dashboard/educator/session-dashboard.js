@@ -11,7 +11,6 @@ import { fetchAndRenderStudents } from "https://luminous-yeot-e7ca42.netlify.app
     const updateSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-updateSessionStatusStaging";
     const journalsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalsStaging";
 
-    const countStudentsInSession = document.getElementById("count-students-in-session");
     const modalLoading = document.getElementById("modal-loading");
 
     const waitingText = document.getElementById("text-waiting-status");
