@@ -13,6 +13,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const journalsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalsStaging";
 
     const countStudentsInSession = document.getElementById("count-students-in-session");
+    const modalLoading = document.getElementById("modal-loading");
 
     const waitingText = document.getElementById("text-waiting-status");
     const studentList = document.getElementById("students-list");
@@ -44,7 +45,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const journalSidebarBg = document.getElementById("sidebar-journal-bg");
     const journalSidebarCloseBtn = document.getElementById("sidebar-journal-close-btn");
 
-    if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime ||
+    if (!studentList || !waitingText || !studentViewTable || !pausedSessionTime || !wrapperPausedSessionTime || !modalLoading ||
       !activeSessionTime || !wrapperActiveSessionTime || !countStudentsInSession || !pauseBtn || !pauseBtnConfirm || !resumeBtn || !pauseModal
     ) return;
 
@@ -128,7 +129,9 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     // === Handle pause session ===
     if (pauseBtnConfirm) {
+
       pauseBtnConfirm.addEventListener("click", function () {
+        modalLoading.style.display = "flex";
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -152,9 +155,11 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
             pausedSessionTime.style.display = "flex";
             wrapperPausedSessionTime.style.display = "flex";
+            modalLoading.style.display = "none";
           })
           .catch(err => {
             console.error("Failed to pause session:", err);
+            modalLoading.style.display = "none";
             alert("There was a problem pausing the session. Please try again.");
           });
       });
@@ -163,6 +168,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     // === Handle resume session ===
     if (resumeBtn) {
       resumeBtn.addEventListener("click", function () {
+        modalLoading.style.display = "flex";
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -192,9 +198,14 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
                 activeSessionTime.style.display = "flex";
                 wrapperActiveSessionTime.style.display = "flex";
+                modalLoading.style.display = "none";
+              }).catch(err => {
+                modalLoading.style.display = "none";
+                console.error("Failed to fetch updated session:", err);
               });
           })
           .catch(err => {
+            modalLoading.style.display = "none";
             console.error("Failed to resume session:", err);
           });
       });
@@ -203,6 +214,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     // === Handle finish session ===
     if (endBtn) {
       endBtn.addEventListener("click", function () {
+        modalLoading.style.display = "flex";
         fetch(updateSessionUrl, {
           method: "PATCH",
           headers,
@@ -213,9 +225,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
             return res.json();
           })
           .then(() => {
-            window.location.href = "/educators-home";
+            modalLoading.style.display = "none";
           })
           .catch(err => {
+            modalLoading.style.display = "none";
             console.error("Failed to finish session:", err);
           });
       });
