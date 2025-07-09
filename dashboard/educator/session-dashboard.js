@@ -64,7 +64,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     };
 
     const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get("sessionId") || null;
+    const sessionId = params.get("sessionId") || "";
     // === Fetch session info and start timer
     fetch(`${currentSessionUrl}?sessionId=${sessionId}`, { headers })
       .then(res => {
