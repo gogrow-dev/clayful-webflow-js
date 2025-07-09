@@ -21,6 +21,7 @@ import { fetchAndRenderStudents } from "https://luminous-yeot-e7ca42.netlify.app
     const wrapperActiveSessionTime = document.getElementById("wrapper-active-session-time");
     const pausedSessionTime = document.getElementById("paused-session-time");
     const wrapperPausedSessionTime = document.getElementById("wrapper-paused-session-time");
+    const countStudentsInSession = document.getElementById("count-students-in-session");
 
     const pauseBtn = document.getElementById("btn-pause-session");
     const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
