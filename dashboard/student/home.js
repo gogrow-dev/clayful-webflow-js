@@ -42,7 +42,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       studentJoinSessionButton.addEventListener("click", () => {
         if (studentErrorMsg) studentErrorMsg.style.display = "none";
         if (continueErrorMsg) continueErrorMsg.style.display = "none";
-        if (modalLoading) modalLoading.style.display = "flex";
+        if (modalLoading) modalLoading.style.display = "none";
       });
     }
 
@@ -67,7 +67,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
 
 
         const joinSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/student-joinSessionStaging";
-
+        if (modalLoading) modalLoading.style.display = "flex";
         const response = await fetch(joinSessionUrl, {
           method: "POST",
           headers: headers,
