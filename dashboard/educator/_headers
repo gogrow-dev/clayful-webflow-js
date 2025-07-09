@@ -6,3 +6,5 @@
   Cache-Control: no-store
 /journals-tab.js
   Cache-Control: no-store
+/overview-tab.js
+  Cache-Control: no-store
