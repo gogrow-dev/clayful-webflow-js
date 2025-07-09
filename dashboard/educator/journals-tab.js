@@ -1,6 +1,4 @@
-export function fetchAndRenderJournals(journalsUrl, headers, pullData = true) {
-  if (!pullData) return;
-    
+export function fetchAndRenderJournals(journalsUrl, headers) {
   const journalsList = document.getElementById("journals-list");
   const waitingTextJournals = document.getElementById("text-waiting-journals-status");
   const journalViewTable = document.querySelector(".journal_view_table");
