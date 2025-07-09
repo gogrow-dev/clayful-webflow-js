@@ -120,6 +120,7 @@ async function fetchAndRenderSidebarJournalStudents(journalId, sessionId, header
   const journalStudentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalStudentsStaging";
   const sidebarStudentsTable = document.getElementById("sidebar-journal-students-table")
   const sidebarStudentsList = document.getElementById("sidebar-journal-student-list")
+  const sidebarLoading = document.getElementById("sidebar-journal-loading")
 
 
   sidebarStudentsList.innerHTML = "";
