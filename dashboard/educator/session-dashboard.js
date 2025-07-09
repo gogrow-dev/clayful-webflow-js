@@ -28,7 +28,8 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const pauseBtnConfirm = document.getElementById("btn-confirm-pause-session");
     const pauseModal = document.getElementById("pause-modal");
     const resumeBtn = document.getElementById("btn-resume-session");
-    const endBtn = document.getElementById("btn-end-session");
+    const endConfirmBtn = document.getElementById("btn-end-session");
+    const endBtn = document.getElementById("btn-dashboard-end-session");
 
 
     const sidebar = document.getElementById("sidebar-student");
@@ -125,6 +126,19 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
           activeSessionTime.style.display = "flex";
           wrapperActiveSessionTime.style.display = "flex";
+        } else if (status === "finished") {
+          pauseBtn.style.display = "none";
+          resumeBtn.style.display = "none";
+          endBtn.style.display = "none";
+
+          pausedSessionTime.style.display = "none";
+          wrapperPausedSessionTime.style.display = "none";
+
+          activeSessionTime.style.display = "none";
+          wrapperActiveSessionTime.style.display = "none";
+
+          clearInterval(window._sessionTimerInterval);
+          startSessionTimer(0);
         }
 
       })
@@ -217,8 +231,8 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     }
 
     // === Handle finish session ===
-    if (endBtn) {
-      endBtn.addEventListener("click", function () {
+    if (endConfirmBtn) {
+      endConfirmBtn.addEventListener("click", function () {
         modalLoading.style.display = "flex";
         fetch(updateSessionUrl, {
           method: "PATCH",
@@ -231,6 +245,8 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
           })
           .then(() => {
             modalLoading.style.display = "none";
+            // Redirect to home page after finishing session
+            window.location.href = `${window.location.href}?sessionId=${sessionId}`;
           })
           .catch(err => {
             modalLoading.style.display = "none";
