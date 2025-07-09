@@ -121,6 +121,7 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
   async function fetchAndRenderSidebarJournalStudents(journalId) {
     sidebarStudentsList.innerHTML = "";
     sidebarStudentsList.role = "list"
+    sidebarStudentsTable.style.display = "block";
 
     fetch(`${journalStudentsUrl}?journalId=${journalId}&sessionId=${sessionId}`, { headers })
       .then(res => res.json())
@@ -155,7 +156,6 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
     }
 
     row.innerHTML = `
-      <div id="sidebar-journal-student-row" fs-list-element="item" class="students-item">
         <div class="student-information width-200">
           <div class="info-wrapper">
             <div class="div-profile-pic">
@@ -191,7 +191,6 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
             <img loading="lazy" src="https://cdn.prod.website-files.com/62b25ea5deeeeae5c2f76889/68559845ddece1092eba8cca_tabler-icon-arrow-left.svg" alt="arrow pointing left">
           </a>
         </div>
-      </div>
     `;
 
     return row;
