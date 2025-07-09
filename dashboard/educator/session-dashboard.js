@@ -4,6 +4,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   console.log(`educator/session-dashboard.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
   const HOME_PAGE_URL = "/educators-home";
+  const pullData = true;
 
   document.addEventListener("DOMContentLoaded", function () {
     const currentSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStaging";
@@ -29,6 +30,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     const pauseModal = document.getElementById("pause-modal");
     const resumeBtn = document.getElementById("btn-resume-session");
     const endBtn = document.getElementById("btn-end-session");
+
 
     const sidebar = document.getElementById("sidebar-student");
     const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
@@ -62,8 +64,10 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
       Authorization: `Bearer ${token}`
     };
 
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("sessionId") || null;
     // === Fetch session info and start timer
-    fetch(currentSessionUrl, { headers })
+    fetch(`${currentSessionUrl}?sessionId=${sessionId}`, { headers })
       .then(res => {
         if (!res.ok) {
           console.error("Failed to fetch current session");
@@ -226,6 +230,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
           })
           .then(() => {
             modalLoading.style.display = "none";
+            pullData = false;
           })
           .catch(err => {
             modalLoading.style.display = "none";
@@ -297,6 +302,8 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     // === Function to fetch and render students ===
     function fetchAndRenderStudents() {
+      if (!pullData) return;
+
       fetch(studentsUrl, { headers })
         .then(res => res.json())
         .then(data => {
@@ -331,7 +338,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
     async function fetchAndRenderSidebarStudentJournals(studentUserId) {
       sidebarStudentJournalWrapper.innerHTML = "";
 
-      fetch(`${studentsJournalsUrl}?studentUserId=${studentUserId}`, { headers })
+      fetch(`${studentsJournalsUrl}?studentUserId=${studentUserId}&sessionId=${sessionId}`, { headers })
         .then(res => res.json())
         .then(data => {
           const journals = data?.journals || [];
@@ -443,7 +450,6 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
       if (student.activeJournal) {
 
-
         row.querySelector("#open-student-details").addEventListener("click", async function (e) {
           e.preventDefault();
 
@@ -551,7 +557,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     if (tabJournals) {
       tabJournals.addEventListener("click", function () {
-        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers));
+        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, pullData));
       });
     }
 
@@ -563,7 +569,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     // Initial fetch
     if (tabJournals.classList.contains("w--current")) {
-      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers));
+      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, headers, pullData));
     } else if (tabOverview.classList.contains("w--current")) {
       setFetchInterval(fetchAndRenderStudents);
     }
