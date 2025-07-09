@@ -1,16 +1,8 @@
 export function fetchAndRenderJournals(journalsUrl, headers) {
-  const journalStudentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalStudentsStaging";
-
   const journalsList = document.getElementById("journals-list");
   const waitingTextJournals = document.getElementById("text-waiting-journals-status");
   const journalViewTable = document.querySelector(".journal_view_table");
-  const sidebar = document.getElementById("sidebar-journal");
-  const sidebarLoading = document.getElementById("sidebar-journal-loading")
-  const sidebarStudentsTable = document.getElementById("sidebar-journal-students-table")
-  const sidebarStudentsList = document.getElementById("sidebar-journal-student-list")
 
-  const params = new URLSearchParams(window.location.search);
-  let sessionId = params.get("sessionId") || "";
 
   fetch(journalsUrl, { headers })
     .then(res => res.json())
@@ -40,21 +32,31 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
       console.error("Failed to fetch journals", err);
     });
 
-  function createJournalRow(journal, id) {
+  return;
+}
 
-    const row = document.createElement("div");
-    row.className = "journal-collection-item w-dyn-item";
-    row.role = "listitem"
-    row.id = `journal-${id}`
 
-    let formattedTime = "—";
-    if (journal.avgTimeSpentInSeconds) {
-      const seconds = (journal.avgTimeSpentInSeconds % 60).toString().padStart(2, '0');
-      const minutes = Math.floor(journal.avgTimeSpentInSeconds / 60).toString().padStart(2, '0');
-      formattedTime = `${minutes}:${seconds}`;
-    }
+function createJournalRow(journal, id) {
+  const sidebar = document.getElementById("sidebar-journal");
+  const sidebarLoading = document.getElementById("sidebar-journal-loading")
+  const sidebarStudentsTable = document.getElementById("sidebar-journal-students-table")
 
-    row.innerHTML = `
+  const params = new URLSearchParams(window.location.search);
+  let sessionId = params.get("sessionId") || "";
+
+  const row = document.createElement("div");
+  row.className = "journal-collection-item w-dyn-item";
+  row.role = "listitem"
+  row.id = `journal-${id}`
+
+  let formattedTime = "—";
+  if (journal.avgTimeSpentInSeconds) {
+    const seconds = (journal.avgTimeSpentInSeconds % 60).toString().padStart(2, '0');
+    const minutes = Math.floor(journal.avgTimeSpentInSeconds / 60).toString().padStart(2, '0');
+    formattedTime = `${minutes}:${seconds}`;
+  }
+
+  row.innerHTML = `
     <div class="journal-collection-item">
       <div class="journal-column number table">
         <p id="journal-number" class="text_l_dashboard white">
@@ -91,71 +93,76 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
     </div>
   `;
 
-    row.querySelector("#journal-open-details").addEventListener("click", async function (e) {
-      e.preventDefault();
+  row.querySelector("#journal-open-details").addEventListener("click", async function (e) {
+    e.preventDefault();
 
-      if (!sidebar) {
-        console.error("Sidebar element not found");
-        return;
-      }
-
-      sidebar.style.display = "flex";
-
-      const journalTitle = sidebar.querySelector("#sidebar-journal-title");
-      const journalDescription = sidebar.querySelector("#sidebar-journal-desc");
-      const journalImage = sidebar.querySelector("#sidebar-journal-img");
-
-      if (journalTitle) journalTitle.textContent = journal.name;
-      if (journalDescription) journalDescription.textContent = journal.description || "";
-      if (journalImage) journalImage.innerHTML = `<img src="${journal.featuredImage}" alt="Journal Image" />`;
-      sidebarLoading.style.display = "flex";
-      sidebarStudentsTable.style.display = "none";
-
-      await fetchAndRenderSidebarJournalStudents(journal.id);
+    if (!sidebar) {
+      console.error("Sidebar element not found");
       return;
-    });
-
-    return row;
-  }
-
-  async function fetchAndRenderSidebarJournalStudents(journalId) {
-    sidebarStudentsList.innerHTML = "";
-    sidebarStudentsList.role = "list"
-
-    fetch(`${journalStudentsUrl}?journalId=${journalId}&sessionId=${sessionId}`, { headers })
-      .then(res => res.json())
-      .then(data => {
-        const students = data?.students || [];
-
-        sidebarStudentsTable.style.display = "block";
-        sidebarLoading.style.display = "none";
-        if (sidebarStudentsList) {
-          students.forEach((student, idx) => {
-            const row = createSidebarStudentElement(student, idx + 1);
-            sidebarStudentsList.appendChild(row);
-          });
-        }
-        console.log("Fetched journal students:", students);
-      })
-      .catch(err => {
-        console.error("Failed to fetch journal students", err);
-      });
-  }
-
-  function createSidebarStudentElement(student, id) {
-    const row = document.createElement("div");
-    row.id = `sidebar-journal-student-row-${id}`;
-    row.role = "listitem"
-    row.className = "students-item";
-
-    let formattedTime = "—";
-    if (student.timeSpentInSeconds) {
-      const seconds = (student.timeSpentInSeconds % 60).toString().padStart(2, '0');
-      const minutes = Math.floor(student.timeSpentInSeconds / 60).toString().padStart(2, '0');
-      formattedTime = `${minutes}:${seconds}`;
     }
 
-    row.innerHTML = `
+    sidebar.style.display = "flex";
+
+    const journalTitle = sidebar.querySelector("#sidebar-journal-title");
+    const journalDescription = sidebar.querySelector("#sidebar-journal-desc");
+    const journalImage = sidebar.querySelector("#sidebar-journal-img");
+
+    if (journalTitle) journalTitle.textContent = journal.name;
+    if (journalDescription) journalDescription.textContent = journal.description || "";
+    if (journalImage) journalImage.innerHTML = `<img src="${journal.featuredImage}" alt="Journal Image" />`;
+    sidebarLoading.style.display = "flex";
+    sidebarStudentsTable.style.display = "none";
+
+    await fetchAndRenderSidebarJournalStudents(journal.id, sessionId);
+    return;
+  });
+
+  return row;
+}
+
+async function fetchAndRenderSidebarJournalStudents(journalId, sessionId) {
+  const journalStudentsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionJournalStudentsStaging";
+  const sidebarStudentsTable = document.getElementById("sidebar-journal-students-table")
+  const sidebarStudentsList = document.getElementById("sidebar-journal-student-list")
+
+
+  sidebarStudentsList.innerHTML = "";
+  sidebarStudentsList.role = "list"
+
+  fetch(`${journalStudentsUrl}?journalId=${journalId}&sessionId=${sessionId}`, { headers })
+    .then(res => res.json())
+    .then(data => {
+      const students = data?.students || [];
+
+      sidebarStudentsTable.style.display = "block";
+      sidebarLoading.style.display = "none";
+      if (sidebarStudentsList) {
+        students.forEach((student, idx) => {
+          const row = createSidebarStudentElement(student, idx + 1);
+          sidebarStudentsList.appendChild(row);
+        });
+      }
+      console.log("Fetched journal students:", students);
+    })
+    .catch(err => {
+      console.error("Failed to fetch journal students", err);
+    });
+}
+
+function createSidebarStudentElement(student, id) {
+  const row = document.createElement("div");
+  row.id = `sidebar-journal-student-row-${id}`;
+  row.role = "listitem"
+  row.className = "students-item";
+
+  let formattedTime = "—";
+  if (student.timeSpentInSeconds) {
+    const seconds = (student.timeSpentInSeconds % 60).toString().padStart(2, '0');
+    const minutes = Math.floor(student.timeSpentInSeconds / 60).toString().padStart(2, '0');
+    formattedTime = `${minutes}:${seconds}`;
+  }
+
+  row.innerHTML = `
         <div class="student-information width-200">
           <div class="info-wrapper">
             <div class="div-profile-pic">
@@ -193,12 +200,12 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
         </div>
     `;
 
-    return row;
-  }
+  return row;
+}
 
-  function renderStudentStatus(status) {
-    if (status === "started") {
-      return `
+function renderStudentStatus(status) {
+  if (status === "started") {
+    return `
       <div id="sidebar-journal-status-started" class="status-journal">
         <div id="student-journal-status-dot" class="student-journal-status-dot-started">
         </div>
@@ -208,8 +215,8 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
         </div>
       </div>
       `
-    } else if (status === "completed") {
-      return `
+  } else if (status === "completed") {
+    return `
       <div id="sidebar-journal-status-completed" class="status-journal">
         <div id="student-journal-status-dot" class="student-journal-status-dot-completed">
         </div>
@@ -219,8 +226,8 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
         </div>
       </div>
       `
-    } else if (status === "chatting") {
-      return `
+  } else if (status === "chatting") {
+    return `
       <div id="sidebar-journal-status-chatting" class="status-journal">
         <div id="student-journal-status-dot" class="student-journal-status-dot-chatting">
         </div>
@@ -230,12 +237,6 @@ export function fetchAndRenderJournals(journalsUrl, headers) {
         </div>
       </div>
       `
-    }
-    return "";
   }
-
-  return;
+  return "";
 }
-
-
-
