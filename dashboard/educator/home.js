@@ -46,9 +46,11 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
           headers: headers,
           body: JSON.stringify({})
         });
-        if (modalLoading) modalLoading.style.display = "none";
-        if (!response.ok) throw new Error("Server error");
 
+        if (!response.ok) {
+          if (modalLoading) modalLoading.style.display = "none";
+          throw new Error("Server error");
+        }
 
         window.location.href = "/dashboard/launch-session";
         isProcessingStartSession = false;
