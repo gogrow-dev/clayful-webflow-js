@@ -302,7 +302,7 @@ import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app
 
     // === Function to fetch and render students ===
     function fetchAndRenderStudents() {
-      fetch(`${studentsUrl}?sessionId=${sessionId}`, { headers })
+      fetch(`${studentsUrl}&sessionId=${sessionId}`, { headers })
         .then(res => res.json())
         .then(data => {
           const students = data?.students || [];
