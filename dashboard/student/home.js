@@ -4,6 +4,42 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   // console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
+  let chatStarted = false;
+
+  // Define Zendesk chat tracking logic
+  window.handleZendeskChatOpen = function () {
+    console.log("[Zendesk] Chat widget opened from cdn");
+
+    // Optionally check unread messages on open
+    if (window.zendeskSDKMessaging) {
+      window.zendeskSDKMessaging.getUnreadMessageCount()
+        .then((count) => {
+          if (count > 0 && !chatStarted) {
+            chatStarted = true;
+            console.log("[Zendesk] Chat started (on open)");
+          }
+        })
+        .catch(() => {});
+    }
+  };
+
+  window.handleZendeskUnreadMessage = function (count) {
+    console.log(`[Zendesk] Unread messages: ${count} from cdn`);
+
+    if (count > 0 && !chatStarted) {
+      chatStarted = true;
+      console.log("[Zendesk] Chat started (from unread count)");
+    }
+  };
+
+  window.handleZendeskChatClose = function () {
+    console.log("[Zendesk] Chat widget closed from cdn");
+
+    if (chatStarted) {
+      console.log("[Zendesk] Chat ended");
+      chatStarted = false;
+    }
+  };
 
   document.addEventListener("DOMContentLoaded", function () {
     const modalLoading = document.getElementById("modal-loading");
@@ -107,3 +143,15 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
     }
   });
 })();
+
+window.handleZendeskChatOpen = function() {
+  // Handle chat open event
+};
+
+window.handleZendeskUnreadMessage = function(count) {
+  // Handle unread message event
+};
+
+window.handleZendeskChatClose = function() {
+  // Handle chat close event
+};

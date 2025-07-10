@@ -13,17 +13,9 @@
     if (!window._typeformScreenChangeHandled) {
       window._typeformScreenChangeHandled = true;
 
-      // console.log("🚀 [CDN] Typeform screen changed (started)");
-      // console.log("TypeformID:", window.typeformId);
-      // console.log("Description:", window.description);
-      // console.log("Journal Name:", window.journalName);
-      // console.log("Featured Image:", window.featuredImage);
-      // console.log("URL:", window.location.href);
-
       const token = localStorage.getItem("_ms-mid");
 
       if (!token) {
-        // console.error("Missing token");
         if (studentErrorMsg) studentErrorMsg.style.display = "block";
         return;
       }
