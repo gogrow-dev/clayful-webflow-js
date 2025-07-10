@@ -5,22 +5,23 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   // console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
   let chatStarted = false;
+  console.log("[Zendesk] Initializing chat tracking from cdn");
 
   // Define Zendesk chat tracking logic
   window.handleZendeskChatOpen = function () {
     console.log("[Zendesk] Chat widget opened from cdn");
 
     // Optionally check unread messages on open
-    if (window.zendeskSDKMessaging) {
-      window.zendeskSDKMessaging.getUnreadMessageCount()
-        .then((count) => {
-          if (count > 0 && !chatStarted) {
-            chatStarted = true;
-            console.log("[Zendesk] Chat started (on open)");
-          }
-        })
-        .catch(() => {});
-    }
+    // if (window.zendeskSDKMessaging) {
+    //   window.zendeskSDKMessaging.getUnreadMessageCount()
+    //     .then((count) => {
+    //       if (count > 0 && !chatStarted) {
+    //         chatStarted = true;
+    //         console.log("[Zendesk] Chat started (on open)");
+    //       }
+    //     })
+    //     .catch(() => {});
+    // }
   };
 
   window.handleZendeskUnreadMessage = function (count) {
