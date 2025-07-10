@@ -21,8 +21,6 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   };
 
   window.handleZendeskUnreadMessage = function (count) {
-    console.log(`[Zendesk] Unread messages: ${count} from cdn`);
-
     if (count > 0) {
       if (!window.chatOpened) {
         window.chatUnreadMessages = true;
@@ -37,8 +35,6 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   };
 
   window.handleZendeskChatClose = function () {
-    console.log("[Zendesk] Chat widget closed from cdn");
-
     if (window.chatStarted) {
       console.log("[Zendesk] Chat ended (on close)");
       window.chatStarted = false;
