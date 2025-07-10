@@ -4,31 +4,45 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
   // console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
-  let chatStarted = false;
+  window.chatStarted = window.chatStarted || false;
 
   // Define Zendesk chat tracking logic
   window.handleZendeskChatOpen = function () {
     console.log("[Zendesk] Chat widget opened from cdn");
 
-    // Optionally check unread messages on open
-    if (window.zendeskSDKMessaging) {
-      console.log("sdkMessaging is available, checking unread messages...");
-      window.zendeskSDKMessaging.getUnreadMessageCount()
-        .then((count) => {
-          if (count > 0 && !chatStarted) {
-            chatStarted = true;
-            console.log("[Zendesk] Chat started (on open)");
-          }
-        })
-        .catch(() => {});
-    }
+    let waitAttempts = 0;
+    const maxAttempts = 10;
+    const interval = setInterval(() => {
+      if (window.zendeskSDKMessaging) {
+        clearInterval(interval);
+
+        console.log("sdkMessaging is available, checking unread messages...");
+        window.zendeskSDKMessaging.getUnreadMessageCount()
+          .then((count) => {
+            if (count > 0 && !window.chatStarted) {
+              window.chatStarted = true;
+              console.log("[Zendesk] Chat started (on open)");
+            }
+          })
+          .catch((err) => {
+            console.warn("Failed to get unread message count:", err);
+          });
+      } else {
+        waitAttempts++;
+        if (waitAttempts >= maxAttempts) {
+          clearInterval(interval);
+          console.warn("zendeskSDKMessaging not available after waiting.");
+        }
+      }
+    }, 300); // poll every 300ms up to ~3 seconds
   };
+
 
   window.handleZendeskUnreadMessage = function (count) {
     console.log(`[Zendesk] Unread messages: ${count} from cdn`);
 
-    if (count > 0 && !chatStarted) {
-      chatStarted = true;
+    if (count > 0 && !window.chatStarted) {
+      window.chatStarted = true;
       console.log("[Zendesk] Chat started (from unread count)");
     }
   };
@@ -36,9 +50,9 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
   window.handleZendeskChatClose = function () {
     console.log("[Zendesk] Chat widget closed from cdn");
 
-    if (chatStarted) {
+    if (window.chatStarted) {
       console.log("[Zendesk] Chat ended");
-      chatStarted = false;
+      window.chatStarted = false;
     }
   };
 
