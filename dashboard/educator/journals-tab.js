@@ -137,7 +137,7 @@ async function fetchAndRenderSidebarJournalStudents(journalId, sessionId, header
       sidebarLoading.style.display = "none";
       if (sidebarStudentsList) {
         students.forEach((student, idx) => {
-          const row = createSidebarStudentElement(student, idx + 1);
+          const row = createSidebarStudentElement(student, idx + 1, sessionId, headers);
           sidebarStudentsList.appendChild(row);
         });
       }
