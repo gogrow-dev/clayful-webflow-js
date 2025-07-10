@@ -16,6 +16,11 @@ export function fetchActiveSession(
   const startingSoonSessionMsg = document.getElementById("starting-soon-session-msg");
 
   let goToSessionHandler = null;
+  
+  if (!sessionBanner || !activeSessionMsg || !pausedSessionMsg || !activeSessionTimeMsg ||
+      !pausedSessionTimeMsg || !activeSessionTime || !pausedSessionTime || !startingSoonSessionMsg) {
+    return;
+  }
 
   fetch(getSessionUrl, { headers })
     .then(res => {
