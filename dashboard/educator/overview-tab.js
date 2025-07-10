@@ -110,7 +110,7 @@ function createStudentRow(student, sessionId, headers) {
               </div>
             </div>
             <div class="student-name-id">
-              <p class="text_m_dashboard" id="student-name" fs-list-field="studentName">${student.studentName}</p>
+              <p class="text_m_dashboard" id="student-name" fs-list-field="studentName">${student.name}</p>
               <p class="text_m_dashboard opacity_60" id="student-email" fs-list-field="email">${student.email || '[Unknown Email]'}</p>
             </div>
           </div>
@@ -175,7 +175,7 @@ function createStudentRow(student, sessionId, headers) {
       const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
       const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
 
-      if (sidebarName) sidebarName.textContent = student.studentName;
+      if (sidebarName) sidebarName.textContent = student.name;
       if (sidebarEmail) sidebarEmail.textContent = student.email || "";
       if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
 
