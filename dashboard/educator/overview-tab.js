@@ -37,7 +37,7 @@ export function fetchAndRenderStudents(sessionId, headers) {
 }
 
 // == fetch and render sidebar student journals
-export async function fetchAndRenderSidebarStudentJournals(studentUserId, sessionId, headers) {
+async function fetchAndRenderSidebarStudentJournals(studentUserId, sessionId, headers) {
   const sidebarStudentJournalWrapper = document.getElementById("sidebar-student-journals-wrapper")
   const sidebarStudentLoading = document.getElementById("sidebar-student-loading");
 
@@ -67,10 +67,6 @@ export async function fetchAndRenderSidebarStudentJournals(studentUserId, sessio
 
 
 function createStudentRow(student, sessionId, headers) {
-  const sidebar = document.getElementById("sidebar-student");
-  const sidebarStudentLoading = document.getElementById("sidebar-student-loading");
-  const sidebarContent = document.querySelector(".sidebar-content");
-
   const row = document.createElement("div");
   row.className = "students-item";
   row.id = "student-row";
@@ -159,42 +155,51 @@ function createStudentRow(student, sessionId, headers) {
       `;
 
   if (student.activeJournal) {
-
     row.querySelector("#open-student-details").addEventListener("click", async function (e) {
-      e.preventDefault();
-
-      if (!sidebar) {
-        console.error("Sidebar element not found");
-        return;
-      }
-
-      sidebar.style.display = "flex";
-      sidebarContent.style.display = "flex";
-
-      const sidebarName = sidebar.querySelector("#sidebar-student-name");
-      const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
-      const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
-
-      if (sidebarName) sidebarName.textContent = student.name;
-      if (sidebarEmail) sidebarEmail.textContent = student.email || "";
-      if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
-
-      const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
-      const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
-      if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
-        if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
-        if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
-      } else {
-        if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
-        if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
-      }
-      sidebarStudentLoading.style.display = "flex";
-
-      await fetchAndRenderSidebarStudentJournals(student.id, sessionId, headers);
+      handleStudentSidebarOpen(e, student, sessionId, headers);
     });
   }
 
   return row;
+}
+
+export async function handleStudentSidebarOpen(e, student, sessionId, headers) {
+  const sidebar = document.getElementById("sidebar-student");
+  const sidebarStudentLoading = document.getElementById("sidebar-student-loading");
+  const sidebarContent = document.querySelector(".sidebar-content");
+  const journalSidebar = document.getElementById("sidebar-journal");
+
+  e.preventDefault();
+
+  if (!sidebar) {
+    console.error("Sidebar element not found");
+    return;
+  }
+
+  journalSidebar.style.display = "none";
+  sidebar.style.display = "flex";
+  sidebarContent.style.display = "flex";
+
+  const sidebarName = sidebar.querySelector("#sidebar-student-name");
+  const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
+  const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
+
+  if (sidebarName) sidebarName.textContent = student.name;
+  if (sidebarEmail) sidebarEmail.textContent = student.email || "";
+  if (sidebarEmoji && student.emoji) sidebarEmoji.src = student.emoji;
+
+  const sidebarConsentTrue = sidebar.querySelector("#sidebar-student-consent-true");
+  const sidebarConsentFalse = sidebar.querySelector("#sidebar-student-consent-false");
+  if (student.consentStatus && student.consentStatus.trim().startsWith("✅")) {
+    if (sidebarConsentTrue) sidebarConsentTrue.style.display = "block";
+    if (sidebarConsentFalse) sidebarConsentFalse.style.display = "none";
+  } else {
+    if (sidebarConsentTrue) sidebarConsentTrue.style.display = "none";
+    if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
+  }
+  sidebarStudentLoading.style.display = "flex";
+
+  await fetchAndRenderSidebarStudentJournals(student.id, sessionId, headers);
 }
 
 function createSidebarJournalElement(journal) {

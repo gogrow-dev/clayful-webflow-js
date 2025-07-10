@@ -1,3 +1,5 @@
+import { handleStudentSidebarOpen } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/educator/overview-tab.js";
+
 export function fetchAndRenderJournals(journalsUrl, sessionId, headers) {
   const journalsList = document.getElementById("journals-list");
   const waitingTextJournals = document.getElementById("text-waiting-journals-status");
@@ -146,7 +148,7 @@ async function fetchAndRenderSidebarJournalStudents(journalId, sessionId, header
     });
 }
 
-function createSidebarStudentElement(student, id) {
+function createSidebarStudentElement(student, id, sessionId, headers) {
   const row = document.createElement("div");
   row.id = `sidebar-journal-student-row-${id}`;
   row.role = "listitem"
@@ -196,6 +198,10 @@ function createSidebarStudentElement(student, id) {
           </a>
         </div>
     `;
+
+  row.querySelector("#sidebar-journal-open-student-details").addEventListener("click", async function (e) {
+    handleStudentSidebarOpen(e, student, sessionId, headers)
+  });
 
   return row;
 }

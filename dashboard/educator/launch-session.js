@@ -3,7 +3,7 @@
   console.log(`educator/launch-session.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
   HOME_PAGE_URL = "/educators-home"
   DASHBOARD_URL = "/dashboard/clayful-session-dashboard";
-  
+
 
   document.addEventListener("DOMContentLoaded", function () {
     const currentSessionUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStaging";
@@ -54,7 +54,7 @@
           const students = studentsHash?.students || [];
 
           const waitingText = document.getElementById("text-waiting-status");
-          const studentJoined = document.getElementById("session-student-joined");  
+          const studentJoined = document.getElementById("session-student-joined");
 
           // if no students, show waiting text and hide student joined message
           if (!students || students.length === 0) {
@@ -66,7 +66,7 @@
           // Clear all current student chips
           studentList.innerHTML = "";
 
-            // Update count
+          // Update count
           const sessionStudentCount = document.getElementById("session-student-count");
           if (sessionStudentCount) {
             sessionStudentCount.textContent = students.length;
@@ -89,7 +89,7 @@
 
             const nameP = document.createElement("p");
             nameP.className = "text_l_dashboard";
-            nameP.textContent = student.studentName;
+            nameP.textContent = student.name;
 
             card.appendChild(emojiDiv);
             card.appendChild(nameP);
