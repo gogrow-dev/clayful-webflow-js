@@ -165,14 +165,13 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       });
     }
 
-    const filter = new Filter();
 
     if (studentContinueJoinSessionButton) {
       studentContinueJoinSessionButton.addEventListener("click", () => {
         const sessionNumber = sessionCodeInput?.value?.trim();
         const studentNameValue = studentName?.value?.trim();
 
-        if (!sessionNumber || !studentNameValue || filter.isProfane(studentNameValue)) {
+        if (!sessionNumber || !studentNameValue) {
           if (continueErrorMsg) continueErrorMsg.style.display = "flex";
         } else {
           if (modalHeader) modalHeader.style.display = "none";
