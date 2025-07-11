@@ -97,10 +97,10 @@ function createStudentRow(student, sessionId, headers) {
     : "";
 
   const chatStatusTranslation = { null: 'notstarted', "active": "started", "finished": "completed" };
-  const chatStatusClass = `student-chat-status-dot-${chatStatusTranslation[activeJournal.chatStatus] || "notstarted"}`;
+  const chatStatusClass = `student-chat-status-dot-${chatStatusTranslation[student.chatStatus] || "notstarted"}`;
 
-  const chatStatus = activeJournal.chatStatus
-    ? activeJournal.chatStatus === "active" ? "Started" : "Completed"
+  const chatStatus = student.chatStatus
+    ? student.chatStatus === "active" ? "Started" : "Completed"
     : "Not Started";
 
   row.innerHTML = `
