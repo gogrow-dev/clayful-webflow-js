@@ -311,32 +311,46 @@ import { fetchAndRenderStudents, fetchAndRenderSessionStats } from "https://lumi
     }
 
 
-    let fetchIntervalId = null;
+    const fetchIntervals = {};
 
-    function setFetchInterval(fetchFn, interval = 15000) {
+    function setFetchInterval(key, fetchFn, interval = 15000) {
       fetchFn();
-      if (fetchIntervalId) clearInterval(fetchIntervalId);
-      fetchIntervalId = setInterval(fetchFn, interval);
+
+      if (fetchIntervals[key]) {
+        clearInterval(fetchIntervals[key]);
+      }
+
+      fetchIntervals[key] = setInterval(fetchFn, interval);
+    }
+
+    function clearAllFetchIntervals() {
+      Object.values(fetchIntervals).forEach(clearInterval);
+      Object.keys(fetchIntervals).forEach(key => delete fetchIntervals[key]);
     }
 
     if (tabJournals) {
       tabJournals.addEventListener("click", function () {
-        setFetchInterval(() => fetchAndRenderJournals(journalsUrl, sessionId, headers));
+        clearAllFetchIntervals();
+        setFetchInterval("journals", () => fetchAndRenderJournals(journalsUrl, sessionId, headers));
       });
     }
 
     if (tabOverview) {
       tabOverview.addEventListener("click", function () {
-        setFetchInterval(() => fetchAndRenderStudents(sessionId, headers));
+        clearAllFetchIntervals();
+        setFetchInterval("students", () => fetchAndRenderStudents(sessionId, headers));
+        setFetchInterval("stats", () => fetchAndRenderSessionStats(sessionId, headers));
       });
     }
 
+    clearAllFetchIntervals();
+
     // Initial fetch
     if (tabJournals.classList.contains("w--current")) {
-      setFetchInterval(() => fetchAndRenderJournals(journalsUrl, sessionId, headers));
+      setFetchInterval("journals", () => fetchAndRenderJournals(journalsUrl, sessionId, headers));
     } else if (tabOverview.classList.contains("w--current")) {
-      setFetchInterval(() => fetchAndRenderStudents(sessionId, headers));
-      setFetchInterval(() => fetchAndRenderSessionStats(sessionId, headers));
+      setFetchInterval("students", () => fetchAndRenderStudents(sessionId, headers));
+      setFetchInterval("stats", () => fetchAndRenderSessionStats(sessionId, headers));
     }
   });
 })();
