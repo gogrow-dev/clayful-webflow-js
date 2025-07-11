@@ -1,5 +1,5 @@
 import { fetchAndRenderJournals } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/educator/journals-tab.js";
-import { fetchAndRenderStudents } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/educator/overview-tab.js";
+import { fetchAndRenderStudents, fetchAndRenderSessionStats } from "https://luminous-yeot-e7ca42.netlify.app/dashboard/educator/overview-tab.js";
 
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
@@ -335,6 +335,7 @@ import { fetchAndRenderStudents } from "https://luminous-yeot-e7ca42.netlify.app
     if (tabJournals.classList.contains("w--current")) {
       setFetchInterval(() => fetchAndRenderJournals(journalsUrl, sessionId, headers));
     } else if (tabOverview.classList.contains("w--current")) {
+      setFetchInterval(() => fetchAndRenderSessionStats(sessionId, headers));
       setFetchInterval(() => fetchAndRenderStudents(sessionId, headers));
     }
   });

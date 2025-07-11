@@ -36,6 +36,31 @@ export function fetchAndRenderStudents(sessionId, headers) {
     });
 }
 
+// === Function to fetch and render session stats ===
+export function fetchAndRenderSessionStats(sessionId, headers) {
+  const sessionStatsUrl = "https://us-central1-clayful-app.cloudfunctions.net/educator-getSessionStatsStaging";
+  const countStudentsStarted = document.getElementById("count-students-started");
+  const countStudentsCompleted = document.getElementById("count-students-completed");
+  const countStudentsChatting = document.getElementById("count-students-chatting");
+
+  fetch(`${sessionStatsUrl}?sessionId=${sessionId}`, { headers })
+    .then(res => res.json())
+    .then(data => {
+      const stats = data?.stats || {};
+      console.log("Fetched session stats:", stats);
+      // countStudentsStarted.textContent = stats.started || "0";
+      // countStudentsCompleted.textContent = stats.completed || "0";
+      // countStudentsChatting.textContent = stats.chatting || "0";
+    })
+    .catch(err => {
+      console.error("Failed to fetch session stats", err);
+      countStudentsStarted.textContent = "0";
+      countStudentsCompleted.textContent = "0";
+      countStudentsChatting.textContent = "0";
+    });
+}
+
+
 // == fetch and render sidebar student journals
 async function fetchAndRenderSidebarStudentJournals(studentUserId, sessionId, headers) {
   const sidebarStudentJournalWrapper = document.getElementById("sidebar-student-journals-wrapper")
