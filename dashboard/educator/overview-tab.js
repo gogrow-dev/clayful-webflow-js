@@ -96,6 +96,13 @@ function createStudentRow(student, sessionId, headers) {
     ? `student-journal-status-dot-${journalStatusStarted ? "started" : "completed"}`
     : "";
 
+  const chatStatusTranslation = { null: 'notstarted', "active": "started", "finished": "completed" };
+  const chatStatusClass = `student-chat-status-dot-${chatStatusTranslation[activeJournal.chatStatus] || "notstarted"}`;
+
+  const chatStatus = activeJournal.chatStatus
+    ? activeJournal.chatStatus === "active" ? "Started" : "Completed"
+    : "Not Started";
+
   row.innerHTML = `
         <div class="student-information width-200">
           <div class="info-wrapper">
@@ -140,6 +147,16 @@ function createStudentRow(student, sessionId, headers) {
           </div>
         </div>
 
+        <div class="student-information width-140 status">
+          <div class="status-chat">
+            <div class="${chatStatusClass}"></div>
+            <div class="sudent-status">
+              <p class="text_m_dashboard" fs-list-field="student-chat-status">
+                ${chatStatus}
+              </p>
+            </div>
+          </div>
+        </div>
 
         <div class="student-information width-140">
           <div class="info-wrapper">
