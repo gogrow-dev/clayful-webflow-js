@@ -200,6 +200,9 @@ export async function handleStudentSidebarOpen(e, student, sessionId, headers) {
   const sidebarName = sidebar.querySelector("#sidebar-student-name");
   const sidebarEmail = sidebar.querySelector("#sidebar-student-email");
   const sidebarEmoji = sidebar.querySelector("#sidebar-student-emoji");
+  const sidebarStudentChatNotstarted = sidebar.querySelector("#sidebar-student-chat-notstarted");
+  const sidebarStudentChatStarted = sidebar.querySelector("#sidebar-student-chat-started");
+  const sidebarStudentChatCompleted = sidebar.querySelector("#sidebar-student-chat-completed");
 
   if (sidebarName) sidebarName.textContent = student.name;
   if (sidebarEmail) sidebarEmail.textContent = student.email || "";
@@ -215,6 +218,20 @@ export async function handleStudentSidebarOpen(e, student, sessionId, headers) {
     if (sidebarConsentFalse) sidebarConsentFalse.style.display = "block";
   }
   sidebarStudentLoading.style.display = "flex";
+
+  if (!student.chatStatus) {
+    sidebarStudentChatNotstarted.style.display = "flex";
+    sidebarStudentChatStarted.style.display = "none";
+    sidebarStudentChatCompleted.style.display = "none";
+  } else if (student.chatStatus === "active") {
+    sidebarStudentChatNotstarted.style.display = "none";
+    sidebarStudentChatStarted.style.display = "flex";
+    sidebarStudentChatCompleted.style.display = "none";
+  } else if (student.chatStatus === "finished") {
+    sidebarStudentChatNotstarted.style.display = "none";
+    sidebarStudentChatStarted.style.display = "none";
+    sidebarStudentChatCompleted.style.display = "flex";
+  }
 
   await fetchAndRenderSidebarStudentJournals(student.id, sessionId, headers);
 }
