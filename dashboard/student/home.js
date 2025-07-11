@@ -2,11 +2,20 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
 
 (function () {
   const IS_PRODUCTION = window.location.hostname === "app.clayfulhealth.com";
+  
+  const UPDATE_CHAT_STATUS_URL = "https://us-central1-clayful-app.cloudfunctions.net/student-updateChatStatusStaging";
   // console.log(`student/home.js Environment: ${IS_PRODUCTION ? "production" : "staging"}`);
 
   window.chatOpened = window.chatOpened || false;
   window.chatStarted = window.chatStarted || false;
   window.chatUnreadMessages = window.chatUnreadMessages || false;
+
+  const token = localStorage.getItem("_ms-mid");
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`
+  };
 
   // Define Zendesk chat tracking logic
   window.handleZendeskChatOpen = function () {
@@ -17,6 +26,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       window.chatStarted = true;
       window.chatUnreadMessages = false;
       // hit endpoint to mark as chatting
+      updateStatusChat("active");
     }
   };
 
@@ -29,6 +39,7 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
         console.log("[Zendesk] Chat started (on unread message and open)");
         window.chatUnreadMessages = false;
         // hit endpoint to mark as chatting
+        updateStatusChat("active");
       }
       
     }
@@ -39,9 +50,35 @@ import { fetchActiveSession } from "https://luminous-yeot-e7ca42.netlify.app/das
       console.log("[Zendesk] Chat ended (on close)");
       window.chatStarted = false;
       // hit endpoint to mark as not chatting anymore
+      updateStatusChat("finished");
     }
     window.chatOpened = false;
   };
+
+  function updateStatusChat(status) {
+    if (!token) {
+      console.error("Missing token for chat status update");
+      return;
+    }
+    fetch(UPDATE_CHAT_STATUS_URL, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({
+          status: status
+        })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to update session status");
+          return res.json();
+        })
+        .then(() => {
+          console.log(`Chat status updated to: ${status}`);
+        })
+        .catch(err => {
+          console.log("Failed to update chat status:", err);
+        });
+  }
+  
 
   document.addEventListener("DOMContentLoaded", function () {
     const modalLoading = document.getElementById("modal-loading");
