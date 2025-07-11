@@ -335,8 +335,8 @@ import { fetchAndRenderStudents, fetchAndRenderSessionStats } from "https://lumi
     if (tabJournals.classList.contains("w--current")) {
       setFetchInterval(() => fetchAndRenderJournals(journalsUrl, sessionId, headers));
     } else if (tabOverview.classList.contains("w--current")) {
-      setFetchInterval(() => fetchAndRenderSessionStats(sessionId, headers));
       setFetchInterval(() => fetchAndRenderStudents(sessionId, headers));
+      setFetchInterval(() => fetchAndRenderSessionStats(sessionId, headers));
     }
   });
 })();
